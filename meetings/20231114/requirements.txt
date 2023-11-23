@@ -1,0 +1,21 @@
+1.
+insert new customer information
+- preferably with a GUI -- this is best -- want to be able to type into cells -- TablePlus may suffice
+- could make it work with SQL INSERT template, e.g.
+-- 'INSERT INTO people (name, address) VALUES (NAME, ADDRESS)'
+-- 'INSERT INTO people (name, address) VALUES ('Michael L', '123 Easy Street')'
+
+2.
+fetch addresses for customers
+- query for customers where dvd_current field is true
+-- 'SELECT address, name FROM people WHERE dvd_current = true'
+- for a GUI, maybe there is a way to construct the query
+
+3.
+print addresses on labels to send in mail
+- workaround ok for now, e.g. query database, paste into libreoffice, print as avery labels
+
+4.
+backup
+- cronjob to backup ***
+- test backup and restore ***

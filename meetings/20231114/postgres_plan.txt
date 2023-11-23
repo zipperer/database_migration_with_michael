@@ -1,0 +1,38 @@
+Will first try using postgres.
+[can also try sqlite]
+
+install postgres
+-- apt-get install postgresql-12
+-- https://www.postgresql.org/download/linux/ubuntu/
+
+install tableplus
+-- https://tableplus.com/linux
+
+identify each table that we want in postgres.
+
+for each table, we will export a csv for the table.
+- include column names, column type
+
+for each table, create a table with the required columns.
+- I will draft versions of this given the csvs shared in advance
+
+import from csv into postgres.
+-- https://www.postgresql.org/docs/current/sql-copy.html
+-- To copy data from a file into the country table:
+
+   COPY country FROM '/usr1/proj/bray/sql/country_data';
+
+demo adding a new person.
+-- in TablePlus in table view window, type into cells and press 'commit changes'
+
+demo querying for all people who satisfy dvd_current.
+-- in TablePlus in SQL window type query and execute
+
+demo pg_dump and pg_restore
+https://www.postgresql.org/docs/current/app-pgdump.html
+https://www.postgresql.org/docs/current/sql-copy.html
+
+
+password on dropbox
+fdll
+
