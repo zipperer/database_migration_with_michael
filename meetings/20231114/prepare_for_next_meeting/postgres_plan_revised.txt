@@ -1,0 +1,24 @@
+= milestones =
+postgres instance is running
+log in to postgres instance
+use psql to issue commands to postgres instance:
+ - make password for admin user
+ - make new user
+ - add password for user
+ - create database in postgres
+ - create table in postgres
+ - add data to table via SQL
+ - example copy data into table in postgres
+ - create table to contain data from table in Lotus Approach
+for a table in Lotus Approach export CSV
+import rows from CSV into table in postgres
+add data to table via SQL
+
+TablePlus:
+ - install
+ - connect to postgres instance
+ - see database and tables
+ - add new row to table and commit change
+ - query contents of table
+
+Connect to database from a computer different from the computer that hosts the database

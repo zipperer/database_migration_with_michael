@@ -1,0 +1,132 @@
+= postgres instance is running =
+
+$ top
+$ ps
+$ ps | grep -i postgres
+$ ls -ltr /etc/postgresql
+$ apt-get update
+$ top
+$ ps
+$ ps | grep -i postgres
+$ ls -ltr /etc/postgresql
+$ apt-get install postgresql # answer prompts about new libraries and timezones
+$ ls -ltr /etc/postgresql # files are here
+open /etc/postgresql/NUMBER/main/pg_hba.conf
+replace 'peer' with 'trust'. save and exit.
+$ service postgresql start
+
+= log in to postgres instance =
+
+$ psql --username postgres --dbname postgres
+
+= use psql to issue commands to postgres instance: =
+==  make password for admin user ==
+
+psql> ALTER USER postgres WITH ENCRYPTED PASSWORD 'example';
+psql> \q
+open /etc/postgresql/NUMBER/main/pg_hba.conf
+replace 'trust' with 'scram-sha-256'. save and exit.
+$ service postgresql restart
+$ psql --username postgres --dbname postgres # provide password
+
+== make new user ==
+
+psql> CREATE USER example_user;
+
+== add password for user == 
+psql> ALTER USER example_user WITH ENCRYPTED PASSWORD 'example1';
+psql> ALTER USER example_user WITH CREATEDB;
+psql> \q
+
+open /etc/postgresql/NUMBER/main/pg_hba.conf.
+replace 'peer' with 'scram-sha-256'. save and exit.
+
+$ service postgresql restart
+$ psql --username example_user --dbname postgres
+
+== create database in postgres == 
+psql> \l # list of databases
+psql> \d # list of tables and related objects
+psql> CREATE DATABASE example_db;
+psql> \connect example_db
+
+== create table in postgres == 
+psql> CREATE TABLE my_table();
+psql> \d
+psql> \d my_table
+psql> ALTER TABLE my_table ADD COLUMN name VARCHAR UNIQUE NOT NULL;
+psql> \d my_table
+psql> SELECT * FROM my_table;
+psql> SELECT name FROM my_table;
+
+== add data to table via SQL ==
+
+psql> INSERT INTO my_table (name) VALUES ('alex');
+psql> SELECT * FROM my_table;
+psql> ALTER TABLE my_table ADD COLUMN phone_number VARCHAR UNIQUE;
+psql> UDPATE my_table SET phone_number = 2 WHERE name = 'alex';
+psql> SELECT * FROM my_table;
+psql> ALTER TABLE my_table ALTER COLUMN phone_number SET NOT NULL;
+psql> \d my_table
+psql> \q
+
+== example copy data into table in postgres ==
+open names_and_numbers.csv.
+put in file:
+george,3
+john,2
+helen,9
+$ psql --username example_user --dbname postgres
+psql> \copy my_table(name, phone_number) FROM '/names_and_numbers.csv' WITH (FORMAT CSV, DELIMITER ',');
+
+== create table to contain data from table in Lotus Approach ==
+for this, we need to construct a form like CREATE TABLE target_table (column_name1 TYPE AND CONSTRAINTS, ..., column_nameN TYPE AND CONSTRAINTS);
+
+== for a table in Lotus Approach export CSV ==
+
+== import rows from CSV into table in postgres ==
+psql> \copy target_table(column1, ..., columnN) FROM '/file_exported_from_lotus_approach.csv' WITH (FORMAT CSV, DELIMITER ',');
+
+perform check that number of rows equal
+SELECT COUNT(*) FROM target_table;
+ and compare to display in Lotus Approach
+
+== add data to table via SQL == 
+
+INSERT INTO target_table(column1, ..., columnN) VALUES (column1_value, ..., columnN_value);
+DELETE FROM target_table WHERE column1 = column1_value;
+
+
+= TablePlus =
+
+== install ==
+https://tableplus.com/linux
+
+== connect to postgres instance ==
+add new connection
+provide credentials for user
+
+== see database and tables ==
+navigate graphical interface
+
+== add new row to table and commit change ==
+click into cell
+add values
+click button to commit
+
+== query contents of table ==
+use SQL window to write query and execute query
+
+
+= Connect to database from a computer different from the computer that hosts the database =
+
+open /etc/postgresql/14/main/postgresql.conf
+find listen_addresses. remove # at beginning of line. replace 'localhost' with '*'.
+save and exit.
+
+open /etc/postgresql/14/main/pg_hba.conf.
+at bottom of file, add new line:
+hostssl all             all             0.0.0.0/0               scram-sha-256
+save and exit.
+
+$ service postgresql restart
