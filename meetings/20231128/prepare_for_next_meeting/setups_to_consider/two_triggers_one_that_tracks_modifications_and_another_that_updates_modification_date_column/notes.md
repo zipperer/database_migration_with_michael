@@ -4,13 +4,13 @@ Suppose we want to track two separate event types:
 
 The approach below tracks both.
 
-= for any edit to TABLE, update TABLE.modification_date to time of edit =
+## for any edit to TABLE, update TABLE.modification_date to time of edit
 
 Two steps:
  - create FUNCTION
  - create TRIGGER that uses function
 
-== create FUNCTION == 
+### create FUNCTION
 
 ```SQL
 -- https://aviyadav231.medium.com/automatically-updating-a-timestamp-column-in-postgresql-using-triggers-98766e3b47a0
@@ -24,11 +24,14 @@ $$ language 'plpgsql';
 ```
 
 name `update_column_with_timestamp_1` is our choice.
+
 `NEW` is plpgsql syntax for the new row.
+
 name `column_that_tracks_modifications` is the name of our column that tracks the modification date.
+
 `now()` is the value to which we are setting the entry in the modification date.
 
-== create TRIGGER that uses function ==
+### create TRIGGER that uses function
 
 ```SQL
 CREATE TRIGGER update_column_with_timestamp
@@ -37,22 +40,27 @@ BEFORE INSERT OR UPDATE OR DELETE ON public.example_table_with_column_that_track
 Based on my experiments `BEFORE` works and `AFTER` does not.
 
 name `update_column_with_timestamp` is our choice.
+
 have not checked whether schema prefix `public.` required on name of table.
+
 `update_column_with_timestamp_1()` is the name of the function we created with `CREATE FUNCTION` followed by `()`.
 
-= for any edit to TABLE, record the edit somewhere =
+## for any edit to TABLE, record the edit somewhere
 
--- https://dba.stackexchange.com/a/331380
--- https://www.cybertec-postgresql.com/en/tracking-changes-in-postgresql/
+* https://dba.stackexchange.com/a/331380
+* https://www.cybertec-postgresql.com/en/tracking-changes-in-postgresql/
 
 Two steps:
  - create FUNCTION
  - create TRIGGER that uses function
 
-= create FUNCTION = 
+### create FUNCTION
 
--- I encountered limitations due to privileges. I executed below with user postgres. Then for andrew_user to be able to see it I had to
--- `psql> GRANT ALL PRIVILEGES ON SCHEMA logging to andrew_user;`
+Aside: I encountered limitations due to privileges. I executed below with user postgres. Then for andrew_user to be able to see it I had to
+```SQL
+psql> GRANT ALL PRIVILEGES ON SCHEMA logging to andrew_user;
+```
+End Aside
 
 ```SQL
 CREATE SCHEMA logging;
@@ -78,7 +86,7 @@ $$ LANGUAGE 'plpgsql' SECURITY DEFINER
 SET search_path = pg_catalog,pg_temp;
 ```
 
-= create TRIGGER that uses function = 
+### create TRIGGER that uses function
 
 ```
 CREATE TRIGGER audit_important_table
@@ -90,7 +98,7 @@ edit name `important_table` to name for our table, e.g. `public.example_table_wi
 edit name `audit_important_table` to name of our choice, e.g. `audit_public_example_table_with_column_that_tracks_modifications`.
 
 
-= aside: how to check which triggers are active? =
+## aside: how to check which triggers are active?
 
 https://stackoverflow.com/questions/704270/how-can-you-tell-if-a-trigger-is-enabled-in-postgresql
 
@@ -103,7 +111,7 @@ JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
 
 If `tgenabled` is `'D'`, the trigger is disabled. All other values (documented here) indicate, that it is enabled in some way.
 
-= todo =  
+## todo
  - create new database and table
  - table includes column that tracks modification time with timestamp
  - add these functions and triggers
