@@ -131,8 +131,10 @@ postgres=# CREATE TRIGGER update_column_with_timestamp ...
 CREATE TRIGGER
 ```
 
-## todo
+## perform experiment
  - create new database and table
  - table includes column that tracks modification time with timestamp
  - add these functions and triggers
  - confirm works
+
+For psql interactions, see files with name `psql-interactions-...{original,clean}.txt` in this folder.

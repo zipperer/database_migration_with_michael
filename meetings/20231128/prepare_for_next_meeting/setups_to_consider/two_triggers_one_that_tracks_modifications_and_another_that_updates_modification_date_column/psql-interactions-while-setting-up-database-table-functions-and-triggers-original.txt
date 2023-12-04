@@ -1,0 +1,270 @@
+Last login: Sat Dec  2 22:07:28 on ttys003
+Welcome to ayer, andrew.
+ayer:learn-python $ docker ps
+CONTAINER ID   IMAGE               COMMAND       CREATED       STATUS       PORTS                    NAMES
+bafb1425fb80   postgres_ubuntu:1   "/bin/bash"   2 weeks ago   Up 11 days   0.0.0.0:5433->5432/tcp   az_postgres_ubuntu1
+ayer:learn-python $ docker exec -it az_postgres_ubuntu1 /bin/bash
+root@bafb1425fb80:/# ls
+bin     lib     my_cron_error_file                my_postgres_dump_script.sh  run   var
+boot    lib32   my_csv_with_names.csv             my_script.sh                sbin
+db.sql  lib64   my_date_file_updated_by_cron      my_script_output.txt        srv
+dev     libx32  my_date_file_updated_by_cron.txt  opt                         sys
+etc     media   my_db_dump_0.sql                  proc                        tmp
+home    mnt     my_postgres_backups               root                        usr
+root@bafb1425fb80:/# psql --username postgres --dbname postgres
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# CREATE DATABASE db_for_tracking_changes;
+CREATE DATABASE
+postgres=# CREATE TABLE table_with_column_that_tracks_modification_date (id SERIAL, column_with_value_that_is_edited VARCHAR, modification_timestamp TIMESTAMP);
+CREATE TABLE
+postgres=# CREATE FUNCTION update_column_with_modification_timestamp()
+postgres-# RETURNS TRIGGER AS $$
+postgres$# BEGIN
+postgres$# NEW.modification_timestamp = now();
+postgres$# RETURN NEW;
+postgres$# END;
+postgres$# $$ language 'plpgsql';
+CREATE FUNCTION
+postgres=# CREATE TRIGGER update_column_with_modification_timestamp_trigger
+postgres-# BEFORE INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date;
+ERROR:  syntax error at or near ";"
+LINE 2: ...R DELETE ON table_with_column_that_tracks_modification_date;
+                                                                      ^
+postgres=# CREATE TRIGGER update_column_with_modification_timestamp_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date 
+postgres-# ;
+ERROR:  syntax error at or near ";"
+LINE 3: ;
+        ^
+postgres=# CREATE TRIGGER update_column_with_modification_timestamp_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON public.table_with_column_that_tracks_modification_date;
+ERROR:  syntax error at or near ";"
+LINE 2: ...E ON public.table_with_column_that_tracks_modification_date;
+                                                                      ^
+postgres=# CREATE TRIGGER update_column_with_modification_timestamp_trigger
+BEFORE INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date 
+postgres-# FOR EACH ROW EXECUTE PROCEDURE update_column_with_modification_timestamp();
+CREATE TRIGGER
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited | modification_timestamp 
+----+----------------------------------+------------------------
+(0 rows)
+
+postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Andrew');
+INSERT 0 1
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  1 | Andrew                           | 2023-12-04 11:46:09.651839
+(1 row)
+
+postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Will');
+INSERT 0 1
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  1 | Andrew                           | 2023-12-04 11:46:09.651839
+  2 | Will                             | 2023-12-04 11:46:25.993794
+(2 rows)
+
+postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE columwith
+
+postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE columwith
+
+postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE column_wi
+
+postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE column_wi
+
+postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE column_with_value_that_is_edited = 'Will';
+UPDATE 1
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  1 | Andrew                           | 2023-12-04 11:46:09.651839
+  2 | William                          | 2023-12-04 11:47:06.843682
+(2 rows)
+
+postgres=# -- observe that timestamp automatically updated  
+postgres=# CREATE TABLE edit_history (id SERIAL, tstamp TIMESTAMP DEFAULT NOW(), schemaname TEXT, tabname TEXT, operation TEXT, who TEXT DEFAULT current_user, new_val JSONB, old_val JSONB);
+CREATE TABLE
+postgres=# CREATE FUNCTION edit_history_table_insert_row_for_edit RETURNS TRIGGER AS $$
+postgres$# BEGIN
+postgres$# INSERT INTO edit_history (tabname, schemaname, operation, new_val, old_val)
+postgres$# VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD));
+postgres$# RETURN NULL;
+postgres$# END;
+postgres$# $$ LANGUAGE 'plpgsql' SECURITY DEFINER
+postgres-# SET search_path = pg_catalog,pg_temp;
+ERROR:  syntax error at or near "RETURNS"
+LINE 1: ...E FUNCTION edit_history_table_insert_row_for_edit RETURNS TR...
+                                                             ^
+postgres=# CREATE FUNCTION edit_history_table_insert_row_for_edit() RETURNS TRIGGER AS $$
+BEGIN
+INSERT INTO edit_history (tabname, schemaname, operation, new_val, old_val)
+VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD));
+RETURN NULL;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER
+SET search_path = pg_catalog,pg_temp;
+CREATE FUNCTION
+postgres=# CREATE TRIGGER trigger_edit_history_table_insert_row_for_edit        
+postgres-# AFTER INSERT OR UPDATE OR DELETE ON table_wit   
+
+postgres-# AFTER INSERT OR UPDATE OR DELETE ON table_wit
+
+postgres-# AFTER INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date
+postgres-# FOR EACH ROW EXECUTE PROCEDURE edit_history_table_insert_row_for_edit();
+CREATE TRIGGER
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  1 | Andrew                           | 2023-12-04 11:46:09.651839
+  2 | William                          | 2023-12-04 11:47:06.843682
+(2 rows)
+
+postgres=# SELECT * FROM edit_history;
+ id | tstamp | schemaname | tabname | operation | who | new_val | old_val 
+----+--------+------------+---------+-----------+-----+---------+---------
+(0 rows)
+
+postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Michael');
+ERROR:  relation "edit_history" does not exist
+LINE 1: INSERT INTO edit_history (tabname, schemaname, operation, ne...
+                    ^
+QUERY:  INSERT INTO edit_history (tabname, schemaname, operation, new_val, old_val)
+VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD))
+CONTEXT:  PL/pgSQL function public.edit_history_table_insert_row_for_edit() line 3 at SQL statement
+postgres=# CREATE FUNCTION edit_history_table_insert_row_for_edit RETURNS TRIGGER AS $$
+BEGIN                                                                                                                                                          INSERT INTO public.edit_history (tabname, schemaname, operation, new_val, old_val)
+VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD));
+RETURN NULL;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER
+SET search_path = pg_catalog,pg_temp;
+ERROR:  syntax error at or near "RETURNS"
+LINE 1: ...E FUNCTION edit_history_table_insert_row_for_edit RETURNS TR...
+                                                             ^
+postgres=# CREATE FUNCTION edit_history_table_insert_row_for_edit() RETURNS TRIGGER AS $$
+BEGIN
+INSERT INTO public.edit_history (tabname, schemaname, operation, new_val, old_val)
+VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD));
+RETURN NULL;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER
+SET search_path = pg_catalog,pg_temp;
+ERROR:  function "edit_history_table_insert_row_for_edit" already exists with same argument types
+postgres=# DROP FUNCTION edit_history_table_insert_row_for_edit;
+ERROR:  cannot drop function edit_history_table_insert_row_for_edit() because other objects depend on it
+DETAIL:  trigger trigger_edit_history_table_insert_row_for_edit on table table_with_column_that_tracks_modification_date depends on function edit_history_table_insert_row_for_edit()
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+postgres=# DROP FUNCTION edit_history_table_insert_row_for_edit CASCADE;
+NOTICE:  drop cascades to trigger trigger_edit_history_table_insert_row_for_edit on table table_with_column_that_tracks_modification_date
+DROP FUNCTION
+postgres=# CREATE FUNCTION edit_history_table_insert_row_for_edit() RETURNS TRIGGER AS $$
+BEGIN
+INSERT INTO public.edit_history (tabname, schemaname, operation, new_val, old_val)
+VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD));
+RETURN NULL;
+END;
+$$ LANGUAGE 'plpgsql' SECURITY DEFINER
+SET search_path = pg_catalog,pg_temp;
+CREATE FUNCTION
+postgres=# CREATE TRIGGER trigger_edit_history_table_insert_row_for_edit 
+AFTER INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date
+FOR EACH ROW EXECUTE PROCEDURE edit_history_table_insert_row_for_edit();
+CREATE TRIGGER
+postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Michael');
+INSERT 0 1
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  1 | Andrew                           | 2023-12-04 11:46:09.651839
+  2 | William                          | 2023-12-04 11:47:06.843682
+  4 | Michael                          | 2023-12-04 11:58:02.36295
+(3 rows)
+
+postgres=# SELECT * FROM edit_history;
+ id |          tstamp           | schemaname |                     tabname                     | operation |   who    |                                        
+             new_val                                                     | old_val 
+----+---------------------------+------------+-------------------------------------------------+-----------+----------+----------------------------------------
+-------------------------------------------------------------------------+---------
+  1 | 2023-12-04 11:58:02.36295 | public     | table_with_column_that_tracks_modification_date | INSERT    | postgres | {"id": 4, "modification_timestamp": "20
+23-12-04T11:58:02.36295", "column_with_value_that_is_edited": "Michael"} | 
+(1 row)
+
+postgres=# DELETE FROM table_with_column_that_tracks_modification_date WHERE column_with_value_that_is_edited = 'Andrew';
+DELETE 1
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  2 | William                          | 2023-12-04 11:47:06.843682
+  4 | Michael                          | 2023-12-04 11:58:02.36295
+(2 rows)
+
+postgres=# SELECT * FROM edit_history;
+ id |           tstamp           | schemaname |                     tabname                     | operation |   who    |                                       
+              new_val                                                     |                                                     old_val                        
+                             
+----+----------------------------+------------+-------------------------------------------------+-----------+----------+---------------------------------------
+--------------------------------------------------------------------------+------------------------------------------------------------------------------------
+-----------------------------
+  1 | 2023-12-04 11:58:02.36295  | public     | table_with_column_that_tracks_modification_date | INSERT    | postgres | {"id": 4, "modification_timestamp": "2
+023-12-04T11:58:02.36295", "column_with_value_that_is_edited": "Michael"} | 
+  2 | 2023-12-04 11:58:38.307689 | public     | table_with_column_that_tracks_modification_date | DELETE    | postgres |                                       
+                                                                          | {"id": 1, "modification_timestamp": "2023-12-04T11:46:09.651839", "column_with_valu
+e_that_is_edited": "Andrew"}
+(2 rows)
+
+postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'Will' WHERE column_with_value_that_is_edited = 'William';
+UPDATE 1
+postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  4 | Michael                          | 2023-12-04 11:58:02.36295
+  2 | Will                             | 2023-12-04 11:59:16.118928
+(2 rows)
+
+postgres=# SELECT * FROM edit_history;
+ id |           tstamp           | schemaname |                     tabname                     | operation |   who    |                                       
+              new_val                                                     |                                                     old_val                        
+                              
+----+----------------------------+------------+-------------------------------------------------+-----------+----------+---------------------------------------
+--------------------------------------------------------------------------+------------------------------------------------------------------------------------
+------------------------------
+  1 | 2023-12-04 11:58:02.36295  | public     | table_with_column_that_tracks_modification_date | INSERT    | postgres | {"id": 4, "modification_timestamp": "2
+023-12-04T11:58:02.36295", "column_with_value_that_is_edited": "Michael"} | 
+  2 | 2023-12-04 11:58:38.307689 | public     | table_with_column_that_tracks_modification_date | DELETE    | postgres |                                       
+                                                                          | {"id": 1, "modification_timestamp": "2023-12-04T11:46:09.651839", "column_with_valu
+e_that_is_edited": "Andrew"}
+  3 | 2023-12-04 11:59:16.118928 | public     | table_with_column_that_tracks_modification_date | UPDATE    | postgres | {"id": 2, "modification_timestamp": "2
+023-12-04T11:59:16.118928", "column_with_value_that_is_edited": "Will"}   | {"id": 2, "modification_timestamp": "2023-12-04T11:47:06.843682", "column_with_valu
+e_that_is_edited": "William"}
+(3 rows)
+
+postgres=# SELECT pg_namespace.nspname, pg_class.relname, pg_trigger.*
+FROM pg_trigger
+JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid
+JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace;
+ nspname |                       relname                       |  oid  | tgrelid | tgparentid |                          tgname                           | tgf
+oid | tgtype | tgenabled | tgisinternal | tgconstrrelid | tgconstrindid | tgconstraint | tgdeferrable | tginitdeferred | tgnargs | tgattr | tgargs | tgqual | t
+goldtable | tgnewtable 
+---------+-----------------------------------------------------+-------+---------+------------+-----------------------------------------------------------+----
+----+--------+-----------+--------------+---------------+---------------+--------------+--------------+----------------+---------+--------+--------+--------+--
+----------+------------
+ public  | example_table_with_column_that_tracks_modifications | 24633 |   24598 |          0 | update_column_with_timestamp                              |  24
+627 |     31 | O         | f            |             0 |             0 |            0 | f            | f              |       0 |        | \x     |        |  
+          | 
+ public  | example_table_with_column_that_tracks_modifications | 24631 |   24598 |          0 | audit_example_table_with_column_that_tracks_modifications |  24
+617 |     29 | O         | f            |             0 |             0 |            0 | f            | f              |       0 |        | \x     |        |  
+          | 
+ public  | table_with_column_that_tracks_modification_date     | 24656 |   24636 |          0 | trigger_edit_history_table_insert_row_for_edit            |  24
+655 |     29 | O         | f            |             0 |             0 |            0 | f            | f              |       0 |        | \x     |        |  
+          | 
+ public  | table_with_column_that_tracks_modification_date     | 24643 |   24636 |          0 | update_column_with_modification_timestamp_trigger         |  24
+642 |     31 | O         | f            |             0 |             0 |            0 | f            | f              |       0 |        | \x     |        |  
+          | 
+(4 rows)
+
+postgres=#  
