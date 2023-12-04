@@ -35,7 +35,8 @@ name `column_that_tracks_modifications` is the name of our column that tracks th
 
 ```SQL
 CREATE TRIGGER update_column_with_timestamp
-BEFORE INSERT OR UPDATE OR DELETE ON public.example_table_with_column_that_tracks_modifications                                       FOR EACH ROW EXECUTE PROCEDURE update_column_with_timestamp_1();
+BEFORE INSERT OR UPDATE OR DELETE ON public.example_table_with_column_that_tracks_modifications
+FOR EACH ROW EXECUTE PROCEDURE update_column_with_timestamp_1();
 ```
 Based on my experiments `BEFORE` works and `AFTER` does not.
 
