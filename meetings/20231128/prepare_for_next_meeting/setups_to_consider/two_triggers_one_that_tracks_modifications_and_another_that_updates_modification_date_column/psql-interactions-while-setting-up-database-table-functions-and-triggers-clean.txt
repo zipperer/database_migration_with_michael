@@ -10,6 +10,7 @@ Type "help" for help.
 
 postgres=# CREATE DATABASE db_for_tracking_changes;
 CREATE DATABASE
+-- NOTE: These instructions create database db_for_tracking_changes but do not connect to that database. Need to connect to database to make changes in it.
 postgres=# CREATE TABLE table_with_column_that_tracks_modification_date (id SERIAL, column_with_value_that_is_edited VARCHAR, modification_timestamp TIMESTAMP);
 CREATE TABLE
 postgres=# CREATE FUNCTION update_column_with_modification_timestamp()
