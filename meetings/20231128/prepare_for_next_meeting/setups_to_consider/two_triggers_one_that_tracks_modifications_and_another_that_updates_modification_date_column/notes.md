@@ -89,7 +89,7 @@ SET search_path = pg_catalog,pg_temp;
 
 ### create TRIGGER that uses function
 
-```
+```SQL
 CREATE TRIGGER audit_important_table
 AFTER INSERT OR UPDATE OR DELETE ON important_table
 FOR EACH ROW EXECUTE PROCEDURE logging.change_trigger();
