@@ -13,6 +13,7 @@ Two steps:
 ### create FUNCTION
 
 ```SQL
+-- https://stackoverflow.com/a/26284695
 -- https://aviyadav231.medium.com/automatically-updating-a-timestamp-column-in-postgresql-using-triggers-98766e3b47a0
 CREATE FUNCTION update_column_with_timestamp_1()
 RETURNS TRIGGER AS $$
