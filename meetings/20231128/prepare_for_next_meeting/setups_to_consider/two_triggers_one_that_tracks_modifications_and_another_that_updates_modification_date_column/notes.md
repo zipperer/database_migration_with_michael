@@ -111,6 +111,26 @@ JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
 
 If `tgenabled` is `'D'`, the trigger is disabled. All other values (documented here) indicate, that it is enabled in some way.
 
+## drop trigger and drop function
+
+While experimenting, I have 'reset' the state of the database by:
+ - drop trigger
+ - drop function
+ - redefine function
+ - redefine trigger
+e.g.
+
+```SQL
+postgres=# DROP TRIGGER update_column_with_timestamp ON public.example_table_with_column_that_tracks_modifications;
+DROP TRIGGER
+postgres=# DROP FUNCTION update_timestamp_trigger;
+DROP FUNCTION
+postgres=# CREATE FUNCTION update_timestamp_trigger() ...
+CREATE FUNCTION
+postgres=# CREATE TRIGGER update_column_with_timestamp ...
+CREATE TRIGGER
+```
+
 ## todo
  - create new database and table
  - table includes column that tracks modification time with timestamp
