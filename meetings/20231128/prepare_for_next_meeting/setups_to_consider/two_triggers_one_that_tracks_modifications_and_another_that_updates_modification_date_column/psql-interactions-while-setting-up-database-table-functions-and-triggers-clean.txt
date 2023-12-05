@@ -10,9 +10,11 @@ Type "help" for help.
 
 postgres=# CREATE DATABASE db_for_tracking_changes;
 CREATE DATABASE
-postgres=# CREATE TABLE table_with_column_that_tracks_modification_date (id SERIAL, column_with_value_that_is_edited VARCHAR, modification_timestamp TIMESTAMP);
+postgres=# \connect db_for_tracking_changes
+You are now connected to database "db_for_tracking_changes" as user "postgres".
+db_for_tracking_changes=# CREATE TABLE table_with_column_that_tracks_modification_date (id SERIAL, column_with_value_that_is_edited VARCHAR, modification_timestamp TIMESTAMP);
 CREATE TABLE
-postgres=# CREATE FUNCTION update_column_with_modification_timestamp()
+db_for_tracking_changes=# CREATE FUNCTION update_column_with_modification_timestamp()
 postgres-# RETURNS TRIGGER AS $$
 postgres$# BEGIN
 postgres$# NEW.modification_timestamp = now();
@@ -20,43 +22,43 @@ postgres$# RETURN NEW;
 postgres$# END;
 postgres$# $$ language 'plpgsql';
 CREATE FUNCTION
-postgres=# CREATE TRIGGER update_column_with_modification_timestamp_trigger
+db_for_tracking_changes=# CREATE TRIGGER update_column_with_modification_timestamp_trigger
 BEFORE INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date 
 postgres-# FOR EACH ROW EXECUTE PROCEDURE update_column_with_modification_timestamp();
 CREATE TRIGGER
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited | modification_timestamp 
 ----+----------------------------------+------------------------
 (0 rows)
 
-postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Andrew');
+db_for_tracking_changes=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Andrew');
 INSERT 0 1
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited |   modification_timestamp   
 ----+----------------------------------+----------------------------
   1 | Andrew                           | 2023-12-04 11:46:09.651839
 (1 row)
 
-postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Will');
+db_for_tracking_changes=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Will');
 INSERT 0 1
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited |   modification_timestamp   
 ----+----------------------------------+----------------------------
   1 | Andrew                           | 2023-12-04 11:46:09.651839
   2 | Will                             | 2023-12-04 11:46:25.993794
 (2 rows)
 
-postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE column_with_value_that_is_edited = 'Will';
+db_for_tracking_changes=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'William' WHERE column_with_value_that_is_edited = 'Will';
 UPDATE 1
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited |   modification_timestamp   
 ----+----------------------------------+----------------------------
   1 | Andrew                           | 2023-12-04 11:46:09.651839
   2 | William                          | 2023-12-04 11:47:06.843682
 (2 rows)
 
-postgres=# -- observe that timestamp automatically updated  
-postgres=# CREATE FUNCTION edit_history_table_insert_row_for_edit() RETURNS TRIGGER AS $$
+db_for_tracking_changes=# -- observe that timestamp automatically updated  
+db_for_tracking_changes=# CREATE FUNCTION edit_history_table_insert_row_for_edit() RETURNS TRIGGER AS $$
 BEGIN
 INSERT INTO public.edit_history (tabname, schemaname, operation, new_val, old_val)
 VALUES (TG_RELNAME, TG_TABLE_SCHEMA, TG_OP, pg_catalog.row_to_json(NEW), pg_catalog.row_to_json(OLD));
@@ -65,13 +67,13 @@ END;
 $$ LANGUAGE 'plpgsql' SECURITY DEFINER
 SET search_path = pg_catalog,pg_temp;
 CREATE FUNCTION
-postgres=# CREATE TRIGGER trigger_edit_history_table_insert_row_for_edit 
+db_for_tracking_changes=# CREATE TRIGGER trigger_edit_history_table_insert_row_for_edit 
 AFTER INSERT OR UPDATE OR DELETE ON table_with_column_that_tracks_modification_date
 FOR EACH ROW EXECUTE PROCEDURE edit_history_table_insert_row_for_edit();
 CREATE TRIGGER
-postgres=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Michael');
+db_for_tracking_changes=# INSERT INTO table_with_column_that_tracks_modification_date (column_with_value_that_is_edited) VALUES ('Michael');
 INSERT 0 1
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited |   modification_timestamp   
 ----+----------------------------------+----------------------------
   1 | Andrew                           | 2023-12-04 11:46:09.651839
@@ -79,7 +81,7 @@ postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
   4 | Michael                          | 2023-12-04 11:58:02.36295
 (3 rows)
 
-postgres=# SELECT * FROM edit_history;
+db_for_tracking_changes=# SELECT * FROM edit_history;
  id |          tstamp           | schemaname |                     tabname                     | operation |   who    |                                        
              new_val                                                     | old_val 
 ----+---------------------------+------------+-------------------------------------------------+-----------+----------+----------------------------------------
@@ -88,16 +90,16 @@ postgres=# SELECT * FROM edit_history;
 23-12-04T11:58:02.36295", "column_with_value_that_is_edited": "Michael"} | 
 (1 row)
 
-postgres=# DELETE FROM table_with_column_that_tracks_modification_date WHERE column_with_value_that_is_edited = 'Andrew';
+db_for_tracking_changes=# DELETE FROM table_with_column_that_tracks_modification_date WHERE column_with_value_that_is_edited = 'Andrew';
 DELETE 1
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited |   modification_timestamp   
 ----+----------------------------------+----------------------------
   2 | William                          | 2023-12-04 11:47:06.843682
   4 | Michael                          | 2023-12-04 11:58:02.36295
 (2 rows)
 
-postgres=# SELECT * FROM edit_history;
+db_for_tracking_changes=# SELECT * FROM edit_history;
  id |           tstamp           | schemaname |                     tabname                     | operation |   who    |                                       
               new_val                                                     |                                                     old_val                        
                              
@@ -111,16 +113,16 @@ postgres=# SELECT * FROM edit_history;
 e_that_is_edited": "Andrew"}
 (2 rows)
 
-postgres=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'Will' WHERE column_with_value_that_is_edited = 'William';
+db_for_tracking_changes=# UPDATE table_with_column_that_tracks_modification_date SET column_with_value_that_is_edited = 'Will' WHERE column_with_value_that_is_edited = 'William';
 UPDATE 1
-postgres=# SELECT * FROM table_with_column_that_tracks_modification_date;
+db_for_tracking_changes=# SELECT * FROM table_with_column_that_tracks_modification_date;
  id | column_with_value_that_is_edited |   modification_timestamp   
 ----+----------------------------------+----------------------------
   4 | Michael                          | 2023-12-04 11:58:02.36295
   2 | Will                             | 2023-12-04 11:59:16.118928
 (2 rows)
 
-postgres=# SELECT * FROM edit_history;
+db_for_tracking_changes=# SELECT * FROM edit_history;
  id |           tstamp           | schemaname |                     tabname                     | operation |   who    |                                       
               new_val                                                     |                                                     old_val                        
                               
@@ -137,7 +139,7 @@ e_that_is_edited": "Andrew"}
 e_that_is_edited": "William"}
 (3 rows)
 
-postgres=# SELECT pg_namespace.nspname, pg_class.relname, pg_trigger.*
+db_for_tracking_changes=# SELECT pg_namespace.nspname, pg_class.relname, pg_trigger.*
 FROM pg_trigger
 JOIN pg_class ON pg_trigger.tgrelid = pg_class.oid
 JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace;
@@ -161,4 +163,4 @@ goldtable | tgnewtable
           | 
 (4 rows)
 
-postgres=#  
+db_for_tracking_changes=#  
