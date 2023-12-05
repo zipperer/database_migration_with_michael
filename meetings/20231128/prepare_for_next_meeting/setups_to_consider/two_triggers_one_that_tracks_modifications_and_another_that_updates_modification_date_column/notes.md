@@ -30,7 +30,7 @@ name `update_column_with_timestamp_1` is our choice.
 
 name `column_that_tracks_modifications` is the name of our column that tracks the modification date.
 
-`now()` is the value to which we are setting the entry in the modification date.
+`now()` is the value to which we are setting the entry in column `column_that_tracks_modifications`.
 
 ### create TRIGGER that uses function
 
