@@ -12,7 +12,6 @@ postgres=# CREATE DATABASE db_for_tracking_changes;
 CREATE DATABASE
 postgres=# \connect db_for_tracking_changes
 You are now connected to database "db_for_tracking_changes" as user "postgres".
-db_for_tracking_changes=#
 db_for_tracking_changes=# CREATE TABLE table_with_column_that_tracks_modification_date (id SERIAL, column_with_value_that_is_edited VARCHAR, modification_timestamp TIMESTAMP);
 CREATE TABLE
 db_for_tracking_changes=# CREATE FUNCTION update_column_with_modification_timestamp()
