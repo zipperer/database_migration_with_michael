@@ -43,7 +43,8 @@ Based on my experiments `BEFORE` works and `AFTER` does not.
 
 name `update_column_with_timestamp` is our choice.
 
-have not checked whether schema prefix `public.` required on name of table.
+have not checked whether schema prefix `public.` required on name of table. 
+[without `public` here this trigger works, but trigger below for table `edit_history` did not work without `public.` and did work with `public.`]
 
 `update_column_with_timestamp_1()` is the name of the function we created with `CREATE FUNCTION` followed by `()`.
 
