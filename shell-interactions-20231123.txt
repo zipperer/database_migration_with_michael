@@ -1,0 +1,185 @@
+Last login: Thu Nov 23 10:31:41 on ttys007
+Welcome to ayer, andrew.
+ayer:grace_and_truth_ministries $ ls
+20231114				docker_interactions			postgres_plan_revised.txt
+20231121				docker_notes				postgres_plan_revised.txt~
+Dockerfile				postgres_plan.txt			postgres_script.txt
+Dockerfile~				postgres_plan.txt~			postgres_script.txt~
+dbf_export				postgres_plan_additional_notes.txt	requirements.txt
+docker_container_interactions		postgres_plan_additional_notes.txt~	requirements.txt~
+ayer:grace_and_truth_ministries $ git clone https://github.com/zipperer/migrate_database_with_michael.git
+Cloning into 'migrate_database_with_michael'...
+remote: Enumerating objects: 6, done.
+remote: Counting objects: 100% (6/6), done.
+remote: Compressing objects: 100% (2/2), done.
+remote: Total 6 (delta 0), reused 0 (delta 0), pack-reused 0
+Receiving objects: 100% (6/6), done.
+ayer:grace_and_truth_ministries $ git config --list
+credential.helper=osxkeychain
+user.name=Andrew-Zipperer
+user.email=atzipperer@gmail.com
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+filter.lfs.clean=git-lfs clean -- %f
+init.defaultbranch=master
+color.ui=auto
+core.editor=/Applications/Emacs.app/Contents/MacOS/Emacs -nw
+ayer:grace_and_truth_ministries $ git config --help
+ayer:grace_and_truth_ministries $ git config unset user.name
+fatal: not in a git directory
+ayer:grace_and_truth_ministries $ cd migrate_database_with_michael/
+ayer:migrate_database_with_michael $ ls
+README.md
+ayer:migrate_database_with_michael $ git config 
+usage: git config [<options>]
+
+Config file location
+    --global              use global config file
+    --system              use system config file
+    --local               use repository config file
+    --worktree            use per-worktree config file
+    -f, --file <file>     use given config file
+    --blob <blob-id>      read config from given blob object
+
+Action
+    --get                 get value: name [value-pattern]
+    --get-all             get all values: key [value-pattern]
+    --get-regexp          get values for regexp: name-regex [value-pattern]
+    --get-urlmatch        get value specific for the URL: section[.var] URL
+    --replace-all         replace all matching variables: name value [value-pattern]
+    --add                 add a new variable: name value
+    --unset               remove a variable: name [value-pattern]
+    --unset-all           remove all matches: name [value-pattern]
+    --rename-section      rename section: old-name new-name
+    --remove-section      remove a section: name
+    -l, --list            list all
+    --fixed-value         use string equality when comparing values to 'value-pattern'
+    -e, --edit            open an editor
+    --get-color           find the color configured: slot [default]
+    --get-colorbool       find the color setting: slot [stdout-is-tty]
+
+Type
+    -t, --type <>         value is given this type
+    --bool                value is "true" or "false"
+    --int                 value is decimal number
+    --bool-or-int         value is --bool or --int
+    --bool-or-str         value is --bool or string
+    --path                value is a path (file or directory name)
+    --expiry-date         value is an expiry date
+
+Other
+    -z, --null            terminate values with NUL byte
+    --name-only           show variable names only
+    --includes            respect include directives on lookup
+    --show-origin         show origin of config (file, standard input, blob, command line)
+    --show-scope          show scope of config (worktree, local, global, system, command)
+    --default <value>     with --get, use default value when missing entry
+
+ayer:migrate_database_with_michael $ git config --list
+credential.helper=osxkeychain
+user.name=Andrew-Zipperer
+user.email=atzipperer@gmail.com
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+filter.lfs.clean=git-lfs clean -- %f
+init.defaultbranch=master
+color.ui=auto
+core.editor=/Applications/Emacs.app/Contents/MacOS/Emacs -nw
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/zipperer/migrate_database_with_michael.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+ayer:migrate_database_with_michael $ git config --unset user.name
+ayer:migrate_database_with_michael $ git config --list
+credential.helper=osxkeychain
+user.name=Andrew-Zipperer
+user.email=atzipperer@gmail.com
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+filter.lfs.clean=git-lfs clean -- %f
+init.defaultbranch=master
+color.ui=auto
+core.editor=/Applications/Emacs.app/Contents/MacOS/Emacs -nw
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/zipperer/migrate_database_with_michael.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+ayer:migrate_database_with_michael $ git config --local --list
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/zipperer/migrate_database_with_michael.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+ayer:migrate_database_with_michael $ git config --list
+credential.helper=osxkeychain
+user.name=Andrew-Zipperer
+user.email=atzipperer@gmail.com
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+filter.lfs.clean=git-lfs clean -- %f
+init.defaultbranch=master
+color.ui=auto
+core.editor=/Applications/Emacs.app/Contents/MacOS/Emacs -nw
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/zipperer/migrate_database_with_michael.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+ayer:migrate_database_with_michael $ git config --edit
+ayer:migrate_database_with_michael $ git config --add user.name zipperer
+ayer:migrate_database_with_michael $ git config --add user.email zipperer.andrew@gmail.com
+ayer:migrate_database_with_michael $ git config --list
+credential.helper=osxkeychain
+user.name=Andrew-Zipperer
+user.email=atzipperer@gmail.com
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+filter.lfs.clean=git-lfs clean -- %f
+init.defaultbranch=master
+color.ui=auto
+core.editor=/Applications/Emacs.app/Contents/MacOS/Emacs -nw
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.precomposeunicode=true
+remote.origin.url=https://github.com/zipperer/migrate_database_with_michael.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.main.remote=origin
+branch.main.merge=refs/heads/main
+user.name=zipperer
+user.email=zipperer.andrew@gmail.com
+ayer:migrate_database_with_michael $ ls
+README.md
+ayer:migrate_database_with_michael $ cat README.md 
+# migrate_database_with_michael
+ayer:migrate_database_with_michael $ em .
+ayer:migrate_database_with_michael $ 
