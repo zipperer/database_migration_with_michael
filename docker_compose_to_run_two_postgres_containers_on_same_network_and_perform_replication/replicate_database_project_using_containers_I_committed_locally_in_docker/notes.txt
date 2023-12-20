@@ -1,0 +1,29 @@
+When I ran first experiment to use docker-compose to make two postgres clusters with one as the main and one as the replica, I
+used the `docker container commit` command to make a docker image from each container.
+
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docker container commit --author 'andrew' --message 'ubuntu_postgres I used as main postgres cluster in experiment to have shared network with a main postgres cluster and a replica postgres cluster' replicate_database_project_database_main_1 shared_network_two_postgres_clusters_main_cluster
+sha256:31d045e5cb0667528af2a3be982c6ce0971eaadf135f34b0198b3532d733e442
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docker container commit --author 'andrew' --message 'ubuntu_postgres I used as replica postgres cluster in experiment to have shared network with a main postgres cluster and a replica postgres cluster' replicate_database_project_database_replica_1 shared_network_two_postgres_clusters_replica_cluster
+
+I then made a new docker-compose.yml that used the images from the `docker container commit` instead of the ubuntu_postgres images.
+
+I then
+ayer:replicate_database_project_using_containers_I_committed $ docker-compose up -d
+Creating network "replicate_database_project_using_containers_i_committed_default" with the default driver
+Creating replicate_database_project_using_containers_i_committed_database_main_1 ... 
+Creating replicate_database_project_using_containers_i_committed_database_replica_1 ... 
+ayer:replicate_database_project_using_containers_I_committed $
+
+And I was able to have the postgres cluster as main and postgres cluster as replica after I:
+# on main
+$ service postgresql start 
+# on replica
+$ cp -R /var/lib/postgresql/14/main /var/lib/postgresql/14/main_bak
+$ rm -rf /var/lib/postgresql/14/main/*
+$ su - postgres
+$ pg_basebackup -h database_main -D /var/lib/postgresql/14/main -U postgres -P -v -R
+
+where hostname database_main comes from the docker-compose.yml file.
+
+At first I had trouble, because I was using the name of the container as the hostname rather than database_main.
+When I was troubleshooting, I was able to use the IP address I found in main container in /etc/hosts.

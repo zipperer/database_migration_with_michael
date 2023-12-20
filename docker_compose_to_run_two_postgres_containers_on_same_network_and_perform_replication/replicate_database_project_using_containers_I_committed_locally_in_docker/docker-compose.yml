@@ -1,0 +1,8 @@
+services:
+  database_main:
+    image: shared_network_two_postgres_clusters_main_cluster
+    tty: true
+
+  database_replica:
+    image: shared_network_two_postgres_clusters_replica_cluster
+    tty: true
