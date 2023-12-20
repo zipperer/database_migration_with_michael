@@ -20,6 +20,7 @@ Along the way:
 documents I have looked at so far:
 https://ubuntu.com/server/docs/databases-postgresql
 https://docs.docker.com/compose/networking/
+https://stackoverflow.com/questions/44884719/exited-with-code-0-docker # I looked here and it led me to add tty: true in docker-compose.yml
 
 
 Current status:
