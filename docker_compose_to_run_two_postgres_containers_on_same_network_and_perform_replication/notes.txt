@@ -1,0 +1,114 @@
+Plan:
+use docker compose
+set up shared network
+on shared network run two containers that have postgres installed
+- $ docker images
+- ubuntu_postgres may satisfy requirements
+-- requirements: has ubuntu and postgres, does not have configuration that needs to be edited back to defaults
+once launched, configure one container to replicate to other
+- follow instructions under 'streaming replication' https://ubuntu.com/server/docs/databases-postgresql
+
+
+Along the way:
+- in docker compose, specify hostnames for the containers
+-- hostname comes from service name
+- after docker compose up
+-- /bin/bash in each container
+-- try to psql --username postgres --host OTHER-CONTAINER --port OTHER-PORT
+-- if it does not work out of the gate, then try editing /etc/postgresql/*/main/postgresql.conf listen_addresses to '*' and restart
+
+documents I have looked at so far:
+https://ubuntu.com/server/docs/databases-postgresql
+https://docs.docker.com/compose/networking/
+
+
+Current status:
+* have directory for project, replicate_database_project
+* have run docker-compose up -d
+* have two containers running ubuntu_postgres
+* have postgres service running on both containers
+- `service postgresql start`
+
+* have set up trust authentication for user postgres on both containers and restart postgres
+- edit /etc/postgresql/14/main/pg_hba.conf
+-- replace 'peer' with 'trust' on line 
+```
+# Database administrative login by Unix domain socket
+local   all             postgres                                trust
+```
+
+* have used psql to log into postgres cluster on each container
+
+* have connected from replica container to postgres cluster on main container
+- edit /etc/postgresql/14/main/postgresql.conf
+-- listen_addresses = 'localhost' -> listen_addresses = '*'
+- add entry in /etc/postgresql/14/main/pg_hba.conf [hba is host-based authentication -- see contents of /etc/postgresql/14/main/postgresql.conf]
+-- hostssl all             all             0.0.0.0/0               trust
+--- this is too permissive, b/c (a) 'trust' instead of a password value like scram-256-sha and (b) 'all' users and (c) 'all' actions, not just replicate
+
+* have confirmed could connect and observe contents of database on main by:
+- from replica container: $ psql --username postgres --host replicate_database_project_database_main_1
+- in main container: `$ psql --username postgres` and `CREATE DATABASE database_only_in_main`
+- in replica container: `psql> \l` and observe that can see database_only_in_main
+- in replica container: `$ psql --username postgres` and `\l` and observe that there is no database_only_in_main
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to edit /etc/postgresql/14/main/postgresql.conf to have wal_level = replica
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to restart postgresql service on main server and stop postgresql service on replica server
+`service postgresql restart`
+`service postgresql stop`
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to edit /etc/postgresql/14/main/postgresql.conf to set up hot standby
+`hot_standby = on`
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to back up current state of main server -- issue commands from standby server
+
+sudo su - postgres
+# backup the current content of the standby server (update the version of your postgres accordingly)
+cp -R /var/lib/postgresql/14/main /var/lib/postgresql/14/main_bak
+# remove all the files in the data directory
+rm -rf /var/lib/postgresql/14/main/*
+pg_basebackup -h <IP address of the main server> -D /var/lib/postgresql/14/main -U replicator -P -v -R
+
+
+root@cfdfc4481517:/# whoami
+root
+root@cfdfc4481517:/# sudo su - postgres
+bash: sudo: command not found
+root@cfdfc4481517:/# su - postgres
+postgres@cfdfc4481517:~$ whoami
+postgres
+postgres@cfdfc4481517:~$ 
+
+
+$ pg_basebackup -h replicate_database_project_database_main_1 -D /var/lib/postgresql/14/main -U postgres -P -v -R
+# changed -U: replicator -> postgres since didn't set up a replicator user and used overly permissive `hostssl all all 0.0.0.0/0 trust`
+
+before the pg_basebackup command worked I edited on main container /etc/postgresql/14/main/pg_hba.conf to add line
+`hostssl replication all 0.0.0.0/0 trust`. I was led to make this change when I received error
+```
+postgres@cfdfc4481517:~$ pg_basebackup -h replicate_database_project_database_main_1 -D /var/lib/postgresql/14/main -U postgres -P -v -R
+pg_basebackup: error: connection to server at "replicate_database_project_database_main_1" (172.22.0.3), port 5432 failed: FATAL:  no pg_hba.conf entry for replication connection from host "172.22.0.2", user "postgres", SSL encryption
+connection to server at "replicate_database_project_database_main_1" (172.22.0.3), port 5432 failed: FATAL:  no pg_hba.conf entry for replication connection from host "172.22.0.2", user "postgres", no encryption
+postgres@cfdfc4481517:~$
+```
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to restart service postgresql on standby (i.e. replica) container 
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to go to main container and select from pg_stat_replication
+`sudo -u postgres psql -c "select * from pg_stat_replication;"`
+I used `psql --username postgres -c "select * from pg_stat_replication;"`
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to create db on main server
+`sudo -u postgres createdb test # on the main server`
+I used `createdb --username postgres test`
+
+* have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to see from standby (i.e. replica) container that the new db test is there
+`sudo -u postgres psql -c "\l" # on the standby server`
+I used `psql --username postgres -c "\l"`
+
+* have observed from replica container in replica cluster new table and data in table, where I made the database and table and data on main cluster
+
+* have observed from replica container that I could not insert into table that I made in main cluster
+
+Current next steps:

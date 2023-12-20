@@ -1,0 +1,309 @@
+Last login: Wed Dec 20 14:56:32 on ttys009
+Welcome to ayer, andrew.
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docke rps
+-bash: docke: command not found
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docker ps
+CONTAINER ID   IMAGE               COMMAND       CREATED         STATUS         PORTS                    NAMES
+cf51ea178e6d   ubuntu_postgres     "/bin/bash"   6 minutes ago   Up 6 minutes                            replicate_database_project_database_main_1
+cfdfc4481517   ubuntu_postgres     "/bin/bash"   6 minutes ago   Up 6 minutes                            replicate_database_project_database_replica_1
+bafb1425fb80   postgres_ubuntu:1   "/bin/bash"   4 weeks ago     Up 4 hours     0.0.0.0:5433->5432/tcp   az_postgres_ubuntu1
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docker exec -it replicate_database_project_database_replica_1 /bin/bash
+root@cfdfc4481517:/# vi /etc/postgresql/14/main/
+conf.d/          environment      pg_ctl.conf      pg_hba.conf      pg_ident.conf    postgresql.conf  start.conf
+root@cfdfc4481517:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cfdfc4481517:/# service postgresql restart
+ * Restarting PostgreSQL 14 database server                                                                                [ OK ] 
+root@cfdfc4481517:/# service postgresql stop   
+ * Stopping PostgreSQL 14 database server                                                                                  [ OK ] 
+root@cfdfc4481517:/# vi /etc/postgresql/14/main/postgresql.conf 
+root@cfdfc4481517:/# whoami
+root
+root@cfdfc4481517:/# sudo su - postgres
+bash: sudo: command not found
+root@cfdfc4481517:/# su - postgres
+postgres@cfdfc4481517:~$ whoami
+postgres
+postgres@cfdfc4481517:~$ ls -ltr /var/lib/postgresql/14/main                                
+total 108
+-rw------- 1 postgres postgres   88 Nov 16 12:13 postgresql.auto.conf
+drwx------ 1 postgres postgres 4096 Nov 16 12:13 pg_xact
+drwx------ 1 postgres postgres 4096 Nov 16 12:13 pg_wal
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_twophase
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_tblspc
+drwx------ 1 postgres postgres 4096 Nov 16 12:13 pg_subtrans
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_stat_tmp
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_snapshots
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_serial
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_replslot
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_notify
+drwx------ 1 postgres postgres 4096 Nov 16 12:13 pg_multixact
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_dynshmem
+drwx------ 2 postgres postgres 4096 Nov 16 12:13 pg_commit_ts
+-rw------- 1 postgres postgres    3 Nov 16 12:13 PG_VERSION
+drwx------ 1 postgres postgres 4096 Nov 16 12:13 base
+-rw------- 1 postgres postgres  130 Dec 20 14:59 postmaster.opts
+drwx------ 1 postgres postgres 4096 Dec 20 14:59 global
+drwx------ 1 postgres postgres 4096 Dec 20 15:18 pg_logical
+drwx------ 1 postgres postgres 4096 Dec 20 15:18 pg_stat
+postgres@cfdfc4481517:~$ ls -ltr /var/lib/postgresql/14/    
+total 8
+drwx------ 1 postgres postgres 4096 Dec 20 15:18 main
+postgres@cfdfc4481517:~$ cp -R /var/lib/postgresql/14/main /var/lib/postgresql/14/main_bak
+postgres@cfdfc4481517:~$ ls /var/lib/postgresql/14/main/* 
+/var/lib/postgresql/14/main/PG_VERSION		  /var/lib/postgresql/14/main/postmaster.opts
+/var/lib/postgresql/14/main/postgresql.auto.conf
+
+/var/lib/postgresql/14/main/base:
+1  13758  13759
+
+/var/lib/postgresql/14/main/global:
+1213	  1214_fsm  1260      1261_fsm	1262_vm   2397	2677  2698  2965  3593	4176  4182  4186  6100	      pg_filenode.map
+1213_fsm  1214_vm   1260_fsm  1261_vm	2396	  2671	2694  2846  2966  4060	4177  4183  6000  6114	      pg_internal.init
+1213_vm   1232	    1260_vm   1262	2396_fsm  2672	2695  2847  2967  4061	4178  4184  6001  6115
+1214	  1233	    1261      1262_fsm	2396_vm   2676	2697  2964  3592  4175	4181  4185  6002  pg_control
+
+/var/lib/postgresql/14/main/pg_commit_ts:
+
+/var/lib/postgresql/14/main/pg_dynshmem:
+
+/var/lib/postgresql/14/main/pg_logical:
+mappings  replorigin_checkpoint  snapshots
+
+/var/lib/postgresql/14/main/pg_multixact:
+members  offsets
+
+/var/lib/postgresql/14/main/pg_notify:
+
+/var/lib/postgresql/14/main/pg_replslot:
+
+/var/lib/postgresql/14/main/pg_serial:
+
+/var/lib/postgresql/14/main/pg_snapshots:
+
+/var/lib/postgresql/14/main/pg_stat:
+db_0.stat  db_1.stat  db_13759.stat  global.stat
+
+/var/lib/postgresql/14/main/pg_stat_tmp:
+
+/var/lib/postgresql/14/main/pg_subtrans:
+0000
+
+/var/lib/postgresql/14/main/pg_tblspc:
+
+/var/lib/postgresql/14/main/pg_twophase:
+
+/var/lib/postgresql/14/main/pg_wal:
+000000010000000000000001  archive_status
+
+/var/lib/postgresql/14/main/pg_xact:
+0000
+postgres@cfdfc4481517:~$ rm -rf /var/lib/postgresql/14/main/*
+postgres@cfdfc4481517:~$ pg_basebackup -h replicate_database_project_database_main_1 -D /var/lib/postgresql/14/main -U postgres -P -v -R
+pg_basebackup: error: connection to server at "replicate_database_project_database_main_1" (172.22.0.3), port 5432 failed: FATAL:  no pg_hba.conf entry for replication connection from host "172.22.0.2", user "postgres", SSL encryption
+connection to server at "replicate_database_project_database_main_1" (172.22.0.3), port 5432 failed: FATAL:  no pg_hba.conf entry for replication connection from host "172.22.0.2", user "postgres", no encryption
+postgres@cfdfc4481517:~$ pg_basebackup -h replicate_database_project_database_main_1 -D /var/lib/postgresql/14/main -U postgres -P -v -R
+pg_basebackup: initiating base backup, waiting for checkpoint to complete
+pg_basebackup: checkpoint completed
+pg_basebackup: write-ahead log start point: 0/2000028 on timeline 1
+pg_basebackup: starting background WAL receiver
+pg_basebackup: created temporary replication slot "pg_basebackup_350"
+34799/34799 kB (100%), 1/1 tablespace                                         
+pg_basebackup: write-ahead log end point: 0/2000100
+pg_basebackup: waiting for background process to finish streaming ...
+pg_basebackup: syncing data to disk ...
+pg_basebackup: renaming backup_manifest.tmp to backup_manifest
+pg_basebackup: base backup completed
+postgres@cfdfc4481517:~$ ls -ltr /var/lib/postgresql/14/main/*
+-rw------- 1 postgres postgres    225 Dec 20 15:25 /var/lib/postgresql/14/main/backup_label
+-rw------- 1 postgres postgres      3 Dec 20 15:25 /var/lib/postgresql/14/main/PG_VERSION
+-rw------- 1 postgres postgres      0 Dec 20 15:25 /var/lib/postgresql/14/main/standby.signal
+-rw------- 1 postgres postgres    382 Dec 20 15:25 /var/lib/postgresql/14/main/postgresql.auto.conf
+-rw------- 1 postgres postgres 179837 Dec 20 15:25 /var/lib/postgresql/14/main/backup_manifest
+
+/var/lib/postgresql/14/main/pg_stat_tmp:
+total 0
+
+/var/lib/postgresql/14/main/pg_wal:
+total 16388
+drwx------ 2 postgres postgres     4096 Dec 20 15:25 archive_status
+-rw------- 1 postgres postgres 16777216 Dec 20 15:25 000000010000000000000002
+
+/var/lib/postgresql/14/main/base:
+total 16
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 13759
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 13758
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 1
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 16384
+
+/var/lib/postgresql/14/main/pg_xact:
+total 8
+-rw------- 1 postgres postgres 8192 Dec 20 15:25 0000
+
+/var/lib/postgresql/14/main/pg_replslot:
+total 0
+
+/var/lib/postgresql/14/main/pg_multixact:
+total 8
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 offsets
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 members
+
+/var/lib/postgresql/14/main/pg_serial:
+total 0
+
+/var/lib/postgresql/14/main/pg_logical:
+total 12
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 snapshots
+-rw------- 1 postgres postgres    8 Dec 20 15:25 replorigin_checkpoint
+drwx------ 2 postgres postgres 4096 Dec 20 15:25 mappings
+
+/var/lib/postgresql/14/main/pg_twophase:
+total 0
+
+/var/lib/postgresql/14/main/pg_tblspc:
+total 0
+
+/var/lib/postgresql/14/main/pg_subtrans:
+total 0
+
+/var/lib/postgresql/14/main/pg_stat:
+total 0
+
+/var/lib/postgresql/14/main/pg_snapshots:
+total 0
+
+/var/lib/postgresql/14/main/pg_notify:
+total 0
+
+/var/lib/postgresql/14/main/pg_dynshmem:
+total 0
+
+/var/lib/postgresql/14/main/pg_commit_ts:
+total 0
+
+/var/lib/postgresql/14/main/global:
+total 540
+-rw------- 1 postgres postgres     0 Dec 20 15:25 4185
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 4182
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 4178
+-rw------- 1 postgres postgres     0 Dec 20 15:25 2846
+-rw------- 1 postgres postgres     0 Dec 20 15:25 6100
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 4186
+-rw------- 1 postgres postgres     0 Dec 20 15:25 4177
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2397
+-rw------- 1 postgres postgres 24576 Dec 20 15:25 1260_fsm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1214
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1213
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 6115
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 6114
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 6002
+-rw------- 1 postgres postgres     0 Dec 20 15:25 4183
+-rw------- 1 postgres postgres     0 Dec 20 15:25 3592
+-rw------- 1 postgres postgres     0 Dec 20 15:25 2966
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1261_vm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1260
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 1233
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 4061
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2698
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2695
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1213_vm
+-rw------- 1 postgres postgres 24576 Dec 20 15:25 1213_fsm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 6001
+-rw------- 1 postgres postgres     0 Dec 20 15:25 4175
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 2967
+-rw------- 1 postgres postgres     0 Dec 20 15:25 2964
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 2396
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1260_vm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1214_vm
+-rw------- 1 postgres postgres 24576 Dec 20 15:25 1214_fsm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 4184
+-rw------- 1 postgres postgres     0 Dec 20 15:25 4181
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 2847
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2694
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2676
+-rw------- 1 postgres postgres 24576 Dec 20 15:25 2396_fsm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 3593
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 2965
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2697
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2671
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 2396_vm
+-rw------- 1 postgres postgres 24576 Dec 20 15:25 1261_fsm
+-rw------- 1 postgres postgres   512 Dec 20 15:25 pg_filenode.map
+-rw------- 1 postgres postgres     0 Dec 20 15:25 6000
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 4176
+-rw------- 1 postgres postgres     0 Dec 20 15:25 4060
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2677
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1262_vm
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1262
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 1261
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 2672
+-rw------- 1 postgres postgres 24576 Dec 20 15:25 1262_fsm
+-rw------- 1 postgres postgres 16384 Dec 20 15:25 1232
+-rw------- 1 postgres postgres  8192 Dec 20 15:25 pg_control
+postgres@cfdfc4481517:~$ ls -ltr /var/lib/postgresql/14/main_bak/
+total 80
+-rw------- 1 postgres postgres  130 Dec 20 15:22 postmaster.opts
+-rw------- 1 postgres postgres    3 Dec 20 15:22 PG_VERSION
+drwx------ 5 postgres postgres 4096 Dec 20 15:22 base
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 global
+-rw------- 1 postgres postgres   88 Dec 20 15:22 postgresql.auto.conf
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_dynshmem
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_commit_ts
+drwx------ 4 postgres postgres 4096 Dec 20 15:22 pg_logical
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_snapshots
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_serial
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_replslot
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_notify
+drwx------ 4 postgres postgres 4096 Dec 20 15:22 pg_multixact
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_stat_tmp
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_stat
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_twophase
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_tblspc
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_subtrans
+drwx------ 3 postgres postgres 4096 Dec 20 15:22 pg_wal
+drwx------ 2 postgres postgres 4096 Dec 20 15:22 pg_xact
+postgres@cfdfc4481517:~$ service postgresql start
+ * Starting PostgreSQL 14 database server                                                                                  [ OK ] 
+postgres@cfdfc4481517:~$ ipconfig
+-bash: ipconfig: command not found
+postgres@cfdfc4481517:~$ ifconig
+-bash: ifconig: command not found
+postgres@cfdfc4481517:~$ psql --username postgres -c "\l"
+                                    List of databases
+         Name          |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   
+-----------------------+----------+----------+---------+---------+-----------------------
+ database_only_in_main | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ postgres              | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ template0             | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                       |          |          |         |         | postgres=CTc/postgres
+ template1             | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                       |          |          |         |         | postgres=CTc/postgres
+ test                  | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+(5 rows)
+
+postgres@cfdfc4481517:~$ psql --username postgres --dbname test -c "\d"
+                  List of relations
+ Schema |         Name         |   Type   |  Owner   
+--------+----------------------+----------+----------
+ public | example_table        | table    | postgres
+ public | example_table_id_seq | sequence | postgres
+(2 rows)
+
+postgres@cfdfc4481517:~$ psql --username postgres --dbname test -c "SELECT * FROM example_table;"
+ id | name 
+----+------
+(0 rows)
+
+postgres@cfdfc4481517:~$ psql --username postgres --dbname test -c "SELECT * FROM example_table;"
+ id |  name  
+----+--------
+  1 | Andrew
+(1 row)
+
+postgres@cfdfc4481517:~$ psql --username postgres --dbname test                                  
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+test=# INSERT INTO example_table (name) VALUES ('Will');
+ERROR:  cannot execute INSERT in a read-only transaction
+test=# \q
+postgres@cfdfc4481517:~$ 

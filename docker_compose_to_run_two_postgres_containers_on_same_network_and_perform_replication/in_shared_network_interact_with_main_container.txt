@@ -1,0 +1,69 @@
+Last login: Wed Dec 20 14:53:51 on ttys008
+Welcome to ayer, andrew.
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docker ps
+CONTAINER ID   IMAGE               COMMAND       CREATED         STATUS         PORTS                    NAMES
+cf51ea178e6d   ubuntu_postgres     "/bin/bash"   5 minutes ago   Up 5 minutes                            replicate_database_project_database_main_1
+cfdfc4481517   ubuntu_postgres     "/bin/bash"   5 minutes ago   Up 5 minutes                            replicate_database_project_database_replica_1
+bafb1425fb80   postgres_ubuntu:1   "/bin/bash"   4 weeks ago     Up 4 hours     0.0.0.0:5433->5432/tcp   az_postgres_ubuntu1
+ayer:docker_compose_to_run_two_postgres_containers_on_same_network_and_perform_replication $ docker exec -it replicate_database_project_database_main_1 /bin/bash
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cf51ea178e6d:/# service postgresql restart
+ * Restarting PostgreSQL 14 database server                                                                                [ OK ] 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/postgresql.conf 
+root@cf51ea178e6d:/# service postgresql restart
+ * Restarting PostgreSQL 14 database server                                                                                [ OK ] 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/postgresql.conf 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cf51ea178e6d:/# service postgresql restart
+ * Restarting PostgreSQL 14 database server                                                                                [ OK ] 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/postgresql.conf 
+root@cf51ea178e6d:/# service postgresql restart
+ * Restarting PostgreSQL 14 database server                                                                                [ OK ] 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cf51ea178e6d:/# service postgresql restart
+ * Restarting PostgreSQL 14 database server                                                                                [ OK ] 
+root@cf51ea178e6d:/# vi /etc/postgresql/14/main/pg_hba.conf 
+root@cf51ea178e6d:/# psql --username postgres -c "select * from pg_stat_replication;"
+ pid | usesysid | usename  | application_name | client_addr | client_hostname | client_port |         backend_start         | back
+end_xmin |   state   | sent_lsn  | write_lsn | flush_lsn | replay_lsn | write_lag | flush_lag | replay_lag | sync_priority | sync_
+state |          reply_time           
+-----+----------+----------+------------------+-------------+-----------------+-------------+-------------------------------+-----
+---------+-----------+-----------+-----------+-----------+------------+-----------+-----------+------------+---------------+------
+------+-------------------------------
+ 358 |       10 | postgres | 14/main          | 172.22.0.2  |                 |       33198 | 2023-12-20 15:28:56.919756-06 |     
+         | streaming | 0/3000148 | 0/3000148 | 0/3000148 | 0/3000148  |           |           |            |             0 | async
+      | 2023-12-20 15:31:55.243659-06
+(1 row)
+
+root@cf51ea178e6d:/# createdb --username postgres test
+root@cf51ea178e6d:/# psql --username postgres                                        
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# \l
+                                    List of databases
+         Name          |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   
+-----------------------+----------+----------+---------+---------+-----------------------
+ database_only_in_main | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ postgres              | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ template0             | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                       |          |          |         |         | postgres=CTc/postgres
+ template1             | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                       |          |          |         |         | postgres=CTc/postgres
+ test                  | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+(5 rows)
+
+postgres=# \q
+root@cf51ea178e6d:/# psql --username postgres
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# \c test
+You are now connected to database "test" as user "postgres".
+test=# CREATE TABLE example_table (id SERIAL, name TEXT);
+CREATE TABLE
+test=# INSERT INTO example_table (name) VALUES ('Andrew');
+INSERT 0 1
+test=# 

@@ -1,0 +1,8 @@
+services:
+  database_main:
+    image: ubuntu_postgres
+    tty: true
+
+  database_replica:
+    image: ubuntu_postgres
+    tty: true
