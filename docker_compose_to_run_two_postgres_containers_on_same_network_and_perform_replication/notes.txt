@@ -50,7 +50,7 @@ local   all             postgres                                trust
 * have confirmed could connect and observe contents of database on main by:
 - from replica container: $ psql --username postgres --host replicate_database_project_database_main_1
 - in main container: `$ psql --username postgres` and `CREATE DATABASE database_only_in_main`
-- in replica container: `psql> \l` and observe that can see database_only_in_main
+- in main container: `psql> \l` and observe that can see database_only_in_main
 - in replica container: `$ psql --username postgres` and `\l` and observe that there is no database_only_in_main
 
 * have followed instructions from https://ubuntu.com/server/docs/databases-postgresql to edit /etc/postgresql/14/main/postgresql.conf to have wal_level = replica
