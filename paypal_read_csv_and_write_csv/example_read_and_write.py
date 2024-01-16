@@ -25,11 +25,15 @@ def is_substring(substring_candidate : str,
     return substring_candidate in string
 
 def row_satisfies_constraints(row) -> bool:
+    return (row_satisfies_constraints_on_color(row) and
+            True # put other constraints here
+            )
+
+def row_satisfies_constraints_on_color(row) -> bool:
     row_favorite_color = row['favorite_color']
     if is_substring(color_to_exclude,row_favorite_color):
         return False
     return True
-
 
 read_csv_write_csv(csv_filename_to_read=filename_to_read,
                    csv_filename_to_write=filename_to_write)                  
