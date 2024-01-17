@@ -11,40 +11,54 @@ columns_to_keep_for_processing = [
     'Country',
     'Type']
 
-# BEGIN don't currently use this to delete the 'Type' 
-columns_to_keep_for_writing_out_csv = copy.copy(columns_to_keep_for_processing)
-columns_to_keep_for_writing_out_csv.remove('Type')
-# END
+transaction_types_to_keep = ['Mobile Payment',
+                             'General Payment',
+                             'Donation Payment',
+                             'General Currency Conversion',
+                             'Express Checkout Payment',
+                             'Subscription Payment'
+                             ]
 
-dataframe_paypal_csv_initial = pd.read_csv('example_csvs/PplTest.csv')
-dataframe_paypal_csv_after_filter_columns = dataframe_paypal_csv_initial[columns_to_keep_for_processing]
+filename_to_read_from='example_csvs/PplTest.csv' # replace with value from commandline
+filename_to_write_to='example_csvs/example_output_from_PplTest1.csv' # replace with value from commandline
 
-pandas_boolean_series_type_mobile_payment = dataframe_paypal_csv_after_filter_columns['Type'].str.contains('Mobile Payment')
-pandas_boolean_series_type_general_payment = dataframe_paypal_csv_after_filter_columns['Type'].str.contains('General Payment')
-pandas_boolean_series_type_donation_payment = dataframe_paypal_csv_after_filter_columns['Type'].str.contains('Donation Payment')
-pandas_boolean_series_type_general_currency_conversion = dataframe_paypal_csv_after_filter_columns['Type'].str.contains('General Currency Conversion')
-pandas_boolean_series_type_express_checkout_payment = dataframe_paypal_csv_after_filter_columns['Type'].str.contains('Express Checkout Payment')
-pandas_boolean_series_type_subscription_payment = dataframe_paypal_csv_after_filter_columns['Type'].str.contains('Subscription Payment')
-# add additional transaction types to keep 
-pandas_boolean_series_type_transaction_to_keep = (pandas_boolean_series_type_mobile_payment  |
-                                                  pandas_boolean_series_type_general_payment |
-                                                  pandas_boolean_series_type_donation_payment |
-                                                  pandas_boolean_series_type_general_currency_conversion | 
-                                                  pandas_boolean_series_type_express_checkout_payment |
-                                                  pandas_boolean_series_type_subscription_payment)
-#dataframe_with_type_transaction_to_keep = dataframe[pandas_boolean_series_type_transaction_to_keep]
+def remove_columns_given_column_names_to_keep_for_processing(dataframe : pd.DataFrame) -> pd.DataFrame:
+    return dataframe[columns_to_keep_for_processing]
 
-dataframe_paypal_csv_after_filter_columns_and_transaction_types = dataframe_paypal_csv_after_filter_columns[pandas_boolean_series_type_transaction_to_keep]
+def filter_rows_given_transaction_types_to_keep(dataframe : pd.DataFrame) -> pd.DataFrame:
+    # https://pandas.pydata.org/docs/reference/api/pandas.Series.isin.html#pandas.Series.isin
+    pandas_boolean_series_type_transaction_to_keep = dataframe['Type'].isin(transaction_types_to_keep)
+    return dataframe[pandas_boolean_series_type_transaction_to_keep]
+        
+def filter_rows_due_to_negative_values(dataframe : pd.DataFrame) -> pd.DataFrame:
+    pandas_boolean_series_gross_is_negative = (dataframe['Gross'] <= 0)
+    pandas_boolean_series_gross_is_positive = (~ pandas_boolean_series_gross_is_negative)
+    return dataframe[pandas_boolean_series_gross_is_positive]
 
-# new 1
-pandas_boolean_series_gross_is_negative = (dataframe_paypal_csv_after_filter_columns_and_transaction_types['Gross'] <= 0)
-pandas_boolean_series_gross_is_positive = (~ pandas_boolean_series_gross_is_negative)
-dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values = dataframe_paypal_csv_after_filter_columns_and_transaction_types[pandas_boolean_series_gross_is_positive]
+def write_dataframe_to_output_file(dataframe : pd.DataFrame) -> None:
+    write_pandas_autoincrementing_int_index = False
+    remove_type_column_when_write_new_csv = False
+    if remove_type_column_when_write_new_csv:
+        columns_to_keep_for_writing_out_csv = copy.copy(columns_to_keep_for_processing)
+        columns_to_keep_for_writing_out_csv.remove('Type')
+        # dataframe_to_write_to_csv = dataframe[columns_to_keep_for_writing_out_csv]
+        # dataframe_to_write_to_csv.to_csv(filename_to_write_to, index=write_pandas_autoincrementing_int_index)
+    else:
+        dataframe.to_csv(filename_to_write_to, index=write_pandas_autoincrementing_int_index)
 
-filename_to_write_to='example_csvs/example_output_from_PplTest1.csv'
-#dataframe_paypal_csv_after_filter_columns_and_transaction_types.to_csv(filename_to_write_to, index=False)
-dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values.to_csv(filename_to_write_to, index=False)
+def main():
+    breakpoint()
+    dataframe_paypal_csv_initial = pd.read_csv(filename_to_read_from)
+        
+    dataframe_paypal_csv_after_filter_columns = remove_columns_given_column_names_to_keep_for_processing(dataframe_paypal_csv_initial)
+    
+    dataframe_paypal_csv_after_filter_columns_and_transaction_types = filter_rows_given_transaction_types_to_keep(dataframe_paypal_csv_after_filter_columns)
 
+    dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values = filter_rows_due_to_negative_values(dataframe_paypal_csv_after_filter_columns_and_transaction_types)
+
+    write_dataframe_to_output_file(dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values)
+
+main()
 
 # future features:
 # 1.
