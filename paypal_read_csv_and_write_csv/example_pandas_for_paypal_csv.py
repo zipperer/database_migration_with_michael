@@ -1,5 +1,6 @@
 import pandas as pd
 import copy
+import argparse
 
 columns_to_keep_for_processing = [
     'Date',
@@ -19,9 +20,6 @@ transaction_types_to_keep = ['Mobile Payment',
                              'Subscription Payment'
                              ]
 
-filename_to_read_from='example_csvs/PplTest.csv' # replace with value from commandline
-filename_to_write_to='example_csvs/example_output_from_PplTest1.csv' # replace with value from commandline
-
 def remove_columns_given_column_names_to_keep_for_processing(dataframe : pd.DataFrame) -> pd.DataFrame:
     return dataframe[columns_to_keep_for_processing]
 
@@ -35,19 +33,31 @@ def filter_rows_due_to_negative_values(dataframe : pd.DataFrame) -> pd.DataFrame
     pandas_boolean_series_gross_is_positive = (~ pandas_boolean_series_gross_is_negative)
     return dataframe[pandas_boolean_series_gross_is_positive]
 
-def write_dataframe_to_output_file(dataframe : pd.DataFrame) -> None:
+def write_dataframe_to_output_file(dataframe : pd.DataFrame,
+                                   filename : str) -> None:
     write_pandas_autoincrementing_int_index = False
     remove_type_column_when_write_new_csv = False
     if remove_type_column_when_write_new_csv:
         columns_to_keep_for_writing_out_csv = copy.copy(columns_to_keep_for_processing)
         columns_to_keep_for_writing_out_csv.remove('Type')
-        # dataframe_to_write_to_csv = dataframe[columns_to_keep_for_writing_out_csv]
-        # dataframe_to_write_to_csv.to_csv(filename_to_write_to, index=write_pandas_autoincrementing_int_index)
+        dataframe_to_write_to_csv = dataframe[columns_to_keep_for_writing_out_csv]
+        dataframe_to_write_to_csv.to_csv(filename, index=write_pandas_autoincrementing_int_index)
     else:
-        dataframe.to_csv(filename_to_write_to, index=write_pandas_autoincrementing_int_index)
+        dataframe.to_csv(filename, index=write_pandas_autoincrementing_int_index)
+
+def parse_commandline_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input_paypal_csv', help='the filename for the csv file we exported from paypal', required=True)
+    parser.add_argument('-o', '--output_csv', help='the filename for the csv file this program will write', required=True)
+    args = parser.parse_args()
+    return args.input_paypal_csv, args.output_csv
+    
 
 def main():
-    breakpoint()
+    #breakpoint()
+    
+    filename_to_read_from, filename_to_write_to = parse_commandline_arguments()
+
     dataframe_paypal_csv_initial = pd.read_csv(filename_to_read_from)
         
     dataframe_paypal_csv_after_filter_columns = remove_columns_given_column_names_to_keep_for_processing(dataframe_paypal_csv_initial)
@@ -56,7 +66,8 @@ def main():
 
     dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values = filter_rows_due_to_negative_values(dataframe_paypal_csv_after_filter_columns_and_transaction_types)
 
-    write_dataframe_to_output_file(dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values)
+    write_dataframe_to_output_file(dataframe_paypal_csv_after_filter_columns_and_transaction_types_and_negative_values,
+                                   filename_to_write_to)
 
 main()
 
