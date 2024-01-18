@@ -1,0 +1,77 @@
+postgres=# \d
+                                      List of relations
+ Schema |                            Name                            |   Type   |    Owner    
+--------+------------------------------------------------------------+----------+-------------
+ public | edit_history                                               | table    | postgres
+ public | edit_history_id_seq                                        | sequence | postgres
+ public | example_table_with_column_that_tracks_modifications        | table    | andrew_user
+ public | example_table_with_column_that_tracks_modifications_id_seq | sequence | andrew_user
+ public | my_new_table                                               | table    | andrew_user
+ public | my_new_table_id_seq                                        | sequence | andrew_user
+ public | table_with_column_that_tracks_modification_date            | table    | postgres
+ public | table_with_column_that_tracks_modification_date_id_seq     | sequence | postgres
+ public | table_with_default_values_for_fields                       | table    | postgres
+(9 rows)
+
+postgres=# \d table_with_column_that_tracks_modification_date
+                                                   Table "public.table_with_column_that_tracks_modification_date"
+              Column              |            Type             | Collation | Nullable |                                   Default
+                                   
+----------------------------------+-----------------------------+-----------+----------+------------------------------------------
+-----------------------------------
+ id                               | integer                     |           | not null | nextval('table_with_column_that_tracks_mo
+dification_date_id_seq'::regclass)
+ column_with_value_that_is_edited | character varying           |           |          | 
+ modification_timestamp           | timestamp without time zone |           |          | 
+Triggers:
+    trigger_edit_history_table_insert_row_for_edit AFTER INSERT OR DELETE OR UPDATE ON table_with_column_that_tracks_modification_
+date FOR EACH ROW EXECUTE FUNCTION edit_history_table_insert_row_for_edit()
+    update_column_with_modification_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON table_with_column_that_tracks_modificat
+ion_date FOR EACH ROW EXECUTE FUNCTION update_column_with_modification_timestamp()
+
+postgres=# SELECT * FROM  table_with_column_that_tracks_modification_date;
+ id | column_with_value_that_is_edited |   modification_timestamp   
+----+----------------------------------+----------------------------
+  4 | Michael                          | 2023-12-04 11:58:02.36295
+  2 | Will                             | 2023-12-04 11:59:16.118928
+(2 rows)
+
+postgres=# ALTER TABLE  table_with_column_that_tracks_modification_date ADD PRIMARY KEY (id);
+ALTER TABLE
+postgres=# \d table_with_column_that_tracks_modification_date
+                                                   Table "public.table_with_column_that_tracks_modification_date"
+              Column              |            Type             | Collation | Nullable |                                   Default
+                                   
+----------------------------------+-----------------------------+-----------+----------+------------------------------------------
+-----------------------------------
+ id                               | integer                     |           | not null | nextval('table_with_column_that_tracks_mo
+dification_date_id_seq'::regclass)
+ column_with_value_that_is_edited | character varying           |           |          | 
+ modification_timestamp           | timestamp without time zone |           |          | 
+Indexes:
+    "table_with_column_that_tracks_modification_date_pkey" PRIMARY KEY, btree (id)
+Triggers:
+    trigger_edit_history_table_insert_row_for_edit AFTER INSERT OR DELETE OR UPDATE ON table_with_column_that_tracks_modification_
+date FOR EACH ROW EXECUTE FUNCTION edit_history_table_insert_row_for_edit()
+    update_column_with_modification_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON table_with_column_that_tracks_modificat
+ion_date FOR EACH ROW EXECUTE FUNCTION update_column_with_modification_timestamp()
+
+postgres=# ALTER TABLE  table_with_column_that_tracks_modification_date DROP CONSTRAINT table_with_column_that_tracks_modification_date_pkey;
+ALTER TABLE
+postgres=# \d table_with_column_that_tracks_modification_date
+                                                   Table "public.table_with_column_that_tracks_modification_date"
+              Column              |            Type             | Collation | Nullable |                                   Default
+                                   
+----------------------------------+-----------------------------+-----------+----------+------------------------------------------
+-----------------------------------
+ id                               | integer                     |           | not null | nextval('table_with_column_that_tracks_mo
+dification_date_id_seq'::regclass)
+ column_with_value_that_is_edited | character varying           |           |          | 
+ modification_timestamp           | timestamp without time zone |           |          | 
+Triggers:
+    trigger_edit_history_table_insert_row_for_edit AFTER INSERT OR DELETE OR UPDATE ON table_with_column_that_tracks_modification_
+date FOR EACH ROW EXECUTE FUNCTION edit_history_table_insert_row_for_edit()
+    update_column_with_modification_timestamp_trigger BEFORE INSERT OR DELETE OR UPDATE ON table_with_column_that_tracks_modificat
+ion_date FOR EACH ROW EXECUTE FUNCTION update_column_with_modification_timestamp()
+
+postgres=# 
