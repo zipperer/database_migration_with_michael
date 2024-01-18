@@ -1,0 +1,94 @@
+postgres=# \d   
+                                      List of relations
+ Schema |                            Name                            |   Type   |    Owner    
+--------+------------------------------------------------------------+----------+-------------
+ public | edit_history                                               | table    | postgres
+ public | edit_history_id_seq                                        | sequence | postgres
+ public | example_table_with_column_that_tracks_modifications        | table    | andrew_user
+ public | example_table_with_column_that_tracks_modifications_id_seq | sequence | andrew_user
+ public | my_new_table                                               | table    | andrew_user
+ public | my_new_table_id_seq                                        | sequence | andrew_user
+ public | table_with_column_that_tracks_modification_date            | table    | postgres
+ public | table_with_column_that_tracks_modification_date_id_seq     | sequence | postgres
+ public | table_with_default_values_for_fields                       | table    | postgres
+(9 rows)
+
+postgres=# SELECT * FROM my_new_table;
+ id |      name      
+----+----------------
+  1 | george
+  2 | helen
+  3 | monica
+  4 | george michael
+  7 | James
+ 12 | Sarah
+ 13 | Robert
+(7 rows)
+
+postgres=# \d my_new_table
+                                 Table "public.my_new_table"
+ Column |       Type        | Collation | Nullable |                 Default                  
+--------+-------------------+-----------+----------+------------------------------------------
+ id     | integer           |           | not null | nextval('my_new_table_id_seq'::regclass)
+ name   | character varying |           | not null | 
+Indexes:
+    "my_new_table_pkey" PRIMARY KEY, btree (id)
+
+postgres=# ALTER TABLE my_new_table ADD UNIQUE (name);
+ALTER TABLE
+postgres=# \d my_new_table
+                                 Table "public.my_new_table"
+ Column |       Type        | Collation | Nullable |                 Default                  
+--------+-------------------+-----------+----------+------------------------------------------
+ id     | integer           |           | not null | nextval('my_new_table_id_seq'::regclass)
+ name   | character varying |           | not null | 
+Indexes:
+    "my_new_table_pkey" PRIMARY KEY, btree (id)
+    "my_new_table_name_key" UNIQUE CONSTRAINT, btree (name)
+
+postgres=# INSERT INTO my_new_table (name) VALUES ('Josh');
+INSERT 0 1
+postgres=# SELECT * FROM my_new_table;
+ id |      name      
+----+----------------
+  1 | george
+  2 | helen
+  3 | monica
+  4 | george michael
+  7 | James
+ 12 | Sarah
+ 13 | Robert
+ 14 | Josh
+(8 rows)
+
+postgres=# INSERT INTO my_new_table (name) VALUES ('Josh');
+ERROR:  duplicate key value violates unique constraint "my_new_table_name_key"
+DETAIL:  Key (name)=(Josh) already exists.
+postgres=# ALTER TABLE my_new_table DROP CONSTRAINT my_new_table_name_key;
+ALTER TABLE
+postgres=# \d my_new_table
+                                 Table "public.my_new_table"
+ Column |       Type        | Collation | Nullable |                 Default                  
+--------+-------------------+-----------+----------+------------------------------------------
+ id     | integer           |           | not null | nextval('my_new_table_id_seq'::regclass)
+ name   | character varying |           | not null | 
+Indexes:
+    "my_new_table_pkey" PRIMARY KEY, btree (id)
+
+postgres=# INSERT INTO my_new_table (name) VALUES ('Josh');
+INSERT 0 1
+postgres=# SELECT * FROM my_new_table;
+ id |      name      
+----+----------------
+  1 | george
+  2 | helen
+  3 | monica
+  4 | george michael
+  7 | James
+ 12 | Sarah
+ 13 | Robert
+ 14 | Josh
+ 16 | Josh
+(9 rows)
+
+postgres=# 
