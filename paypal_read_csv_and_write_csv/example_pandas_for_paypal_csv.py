@@ -46,7 +46,11 @@ def write_dataframe_to_output_file(dataframe : pd.DataFrame,
         dataframe.to_csv(filename, index=write_pandas_autoincrementing_int_index)
 
 def parse_commandline_arguments():
-    parser = argparse.ArgumentParser()
+    commandline_arguments_help_description='''
+    This program:
+     1. takes csv exported from paypal, and 
+     2. writes new csv file containing only those rows and columns pastor uses'''
+    parser = argparse.ArgumentParser(description=commandline_arguments_help_description)
     parser.add_argument('-i', '--input_paypal_csv', help='the filename for the csv file we exported from paypal', required=True)
     parser.add_argument('-o', '--output_csv', help='the filename for the csv file this program will write', required=True)
     args = parser.parse_args()
