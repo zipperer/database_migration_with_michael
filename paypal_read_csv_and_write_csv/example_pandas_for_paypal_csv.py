@@ -85,3 +85,6 @@ main()
 # 3.
 # 'Express Checkout Payment' that has negative value -- can get rid of
 # ^ this is taken care of by removing all negative values
+
+# I ran this script locally with
+# $ python3 example_pandas_for_paypal_csv.py -i 'example_csvs/PplTest.csv' -o 'example_csvs/example_output_from_PplTest2.csv'
