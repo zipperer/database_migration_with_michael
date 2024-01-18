@@ -1,3 +1,7 @@
+https://www.postgresql.org/docs/current/sql-altertable.html
+
+
+
 postgres=# \d
                                       List of relations
  Schema |                            Name                            |   Type   |    Owner    
