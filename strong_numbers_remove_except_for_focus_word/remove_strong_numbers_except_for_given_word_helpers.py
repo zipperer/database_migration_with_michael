@@ -9,7 +9,10 @@ def remove_strong_numbers_except_after_given_word(input_file_contents_as_string 
                                                   ) -> str:
 
     # find each string in input_file_contents_as_string that matches r'\w+\s+<\d+>', e.g. 'rich <124>'.
-    # return a list of these matches, e.g. ['rich <124>', 'beyond <321>', 'brethren <9991>']
+    # return an iterator of these matches, e.g. list() on the iterator would be
+    #   [<re.Match object; span=(7, 17), match='rich <124>'> , 
+    #    <re.Match object; span=(30, 42), match='beyond <321>'>, 
+    #    <re.Match object; span=(51, 66), match='brethren <9991>'>]
     matches_for_pattern_in_input_file_contents_as_string = WORD_FOLLOWED_BY_LEFT_CORNER_BRACKET_NUMBERS_RIGHT_CORNER_BRACKET_PATTERN.finditer(input_file_contents_as_string)
 
     # initialize string in which we will replace. e.g. will replace 'brethren <9991>' with 'brethren'
