@@ -1,7 +1,7 @@
 import argparse
 import re
 from typing import Dict
-from remove_strong_numbers_except_for_given_word_helpers import WORD_FOLLOWED_BY_LEFT_CORNER_BRACKET_NUMBERS_RIGHT_CORNER_BRACKET_PATTERN, WHITESPACE_PATTERN, remove_strong_numbers_except_after_given_word # type : ignore
+from remove_strong_numbers_except_for_given_word_helpers import remove_strong_numbers_except_after_given_word
 
 def parse_commandline_arguments() -> Dict[str, str]:
     description = '''
