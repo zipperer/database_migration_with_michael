@@ -21,10 +21,12 @@ def remove_strong_numbers_except_after_given_word(input_file_contents_as_string 
     # for any match like 'brethren <9991>', replace 'brethren <9991>' with 'brethren'
     for match_for_pattern in matches_for_pattern_in_input_file_contents_as_string:
         # split 'brethren <9991>' into ('brethren', '<9991>')
-        word = match_for_pattern.group(1)
+        word = match_for_pattern.group(1) # extracts the part that matches (\w+) from the whole string that matched (\w+)\s+<\d+>
         if (not word_for_which_to_keep_strong_numbers_pattern.match(word)):
             # replace 'brethren <9991>' with 'brethren'
-            string_with_extra_strong_numbers_removed = string_with_extra_strong_numbers_removed.replace(match_for_pattern.group(), word)
+            string_with_extra_strong_numbers_removed = string_with_extra_strong_numbers_removed.replace(
+                match_for_pattern.group(), # extracts whole string that matched (\w+)\s+<\d+>
+                word)
     return string_with_extra_strong_numbers_removed
 
 def test_pattern_to_detect_word_then_strong_numbers():
