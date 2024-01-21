@@ -33,6 +33,24 @@ def remove_strong_numbers_except_after_given_word(input_file_contents_as_string 
                 word)
     return string_with_extra_strong_numbers_removed
 
+def remove_strong_numbers_except_after_given_word_use_sub(input_file_contents_as_string : str, 
+                                                          word_for_which_to_keep_strong_numbers : str
+                                                          ) -> str:
+
+    # pattern for word for which to keep Strong numbers. pattern is case-insensitive 
+    word_for_which_to_keep_strong_numbers_pattern = re.compile(word_for_which_to_keep_strong_numbers, re.IGNORECASE)
+
+    def replace_word_strong_number_with_word_unless_word_to_keep(word_strong_number_match_object : re.Match) -> str:
+        word = word_strong_number_match_object.group(1)
+        if (not word_for_which_to_keep_strong_numbers_pattern.match(word)):
+            return word
+        else:
+            return word_strong_number_match_object.group()
+
+    input_file_contents_as_string_with_replacements = WORD_FOLLOWED_BY_LEFT_CORNER_BRACKET_NUMBERS_RIGHT_CORNER_BRACKET_PATTERN.sub(replace_word_strong_number_with_word_unless_word_to_keep, input_file_contents_as_string)
+
+    return input_file_contents_as_string_with_replacements
+
 def test_pattern_to_detect_word_then_strong_numbers():
     assert WORD_FOLLOWED_BY_LEFT_CORNER_BRACKET_NUMBERS_RIGHT_CORNER_BRACKET_PATTERN.match('hello <123>') != None
     assert WORD_FOLLOWED_BY_LEFT_CORNER_BRACKET_NUMBERS_RIGHT_CORNER_BRACKET_PATTERN.match('rich <345>') != None
@@ -47,3 +65,8 @@ def test_remove_strong_numbers_except_after_given_word():
     assert remove_strong_numbers_except_after_given_word('hello <123> rich <134> bye <135>', 'rich') == 'hello rich <134> bye'
     assert remove_strong_numbers_except_after_given_word('hello <123> rich <134> bye <135>', 'hello') == 'hello <123> rich bye'
     assert remove_strong_numbers_except_after_given_word('hello <123> rich <134> bye <135>', 'bye') == 'hello rich bye <135>'
+
+def test_remove_strong_numbers_except_after_given_word_use_sub():
+    assert remove_strong_numbers_except_after_given_word_use_sub('hello <123> rich <134> bye <135>', 'rich') == 'hello rich <134> bye'
+    assert remove_strong_numbers_except_after_given_word_use_sub('hello <123> rich <134> bye <135>', 'hello') == 'hello <123> rich bye'
+    assert remove_strong_numbers_except_after_given_word_use_sub('hello <123> rich <134> bye <135>', 'bye') == 'hello rich bye <135>'
