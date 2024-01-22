@@ -1,0 +1,29 @@
+Last login: Mon Jan 22 15:40:58 on ttys008
+Welcome to ayer, andrew.
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main % u+8)]$ docker cp --help
+
+Usage:  docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-
+	docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH
+
+Copy files/folders between a container and the local filesystem
+
+Use '-' as the source to read a tar archive from stdin
+and extract it to a directory destination in a container.
+Use '-' as the destination to stream a tar archive of a
+container source to stdout.
+
+Options:
+  -a, --archive       Archive mode (copy all uid/gid information)
+  -L, --follow-link   Always follow symbol link in SRC_PATH
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main % u+8)]$ docker ps
+CONTAINER ID   IMAGE                 COMMAND       CREATED        STATUS       PORTS                    NAMES
+b8566b142e10   python3-pytest-mypy   "python3"     4 weeks ago    Up 4 weeks                            jovial_knuth
+bafb1425fb80   postgres_ubuntu:1     "/bin/bash"   2 months ago   Up 4 weeks   0.0.0.0:5433->5432/tcp   az_postgres_ubuntu1
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main % u+8)]$ ls
+program_number_and_title.csv			space_separated_to_pipe_separated.py
+program_number_and_title_pipe_separated.csv	space_separated_to_pipe_separated.py~
+program_number_and_title_pipe_separated.csv~
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main % u+8)]$ docker cp program_number_and_title_pipe_separated.csv az_postgres_ubuntu1:/
+ted.csv az_postgres_ubuntu1:/
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main *% u+9)]$ docker cp program_number_and_title_pipe_separated.csv az_postgres_ubuntu1:/
+

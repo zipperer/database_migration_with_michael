@@ -1,0 +1,551 @@
+Last login: Mon Jan 22 15:03:02 on ttys006
+Welcome to ayer, andrew.
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main % u+8)]$ docker ps
+CONTAINER ID   IMAGE                 COMMAND       CREATED        STATUS       PORTS                    NAMES
+b8566b142e10   python3-pytest-mypy   "python3"     4 weeks ago    Up 4 weeks                            jovial_knuth
+bafb1425fb80   postgres_ubuntu:1     "/bin/bash"   2 months ago   Up 4 weeks   0.0.0.0:5433->5432/tcp   az_postgres_ubuntu1
+[andrew@ayer title_program_numbers_and_bible_verse_timestamp_files (main % u+8)]$ docker exec -it az_postgres_ubuntu1 /bin/bash
+root@bafb1425fb80:/# psql --username postgres
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# \l
+                                     List of databases
+          Name           |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   
+-------------------------+----------+----------+---------+---------+-----------------------
+ db_for_tracking_changes | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ db_from_restore         | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ db_from_restore2        | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ db_from_restore3        | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ postgres                | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ template0               | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                         |          |          |         |         | postgres=CTc/postgres
+ template1               | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                         |          |          |         |         | postgres=CTc/postgres
+(7 rows)
+
+postgres=# \d
+                                      List of relations
+ Schema |                            Name                            |   Type   |    Owner    
+--------+------------------------------------------------------------+----------+-------------
+ public | edit_history                                               | table    | postgres
+ public | edit_history_id_seq                                        | sequence | postgres
+ public | example_table_with_column_that_tracks_modifications        | table    | andrew_user
+ public | example_table_with_column_that_tracks_modifications_id_seq | sequence | andrew_user
+ public | my_new_table                                               | table    | andrew_user
+ public | my_new_table_id_seq                                        | sequence | andrew_user
+ public | table_with_column_that_tracks_modification_date            | table    | postgres
+ public | table_with_column_that_tracks_modification_date_id_seq     | sequence | postgres
+ public | table_with_default_values_for_fields                       | table    | postgres
+(9 rows)
+
+postgres=# CREATE TABLE program_id_and_title(id INT PRIMARY KEY, code VARCHAR, title TEXT);
+CREATE TABLE
+postgres=# --\copy program_id_and_title FROM 
+postgres=# \! pwd
+/
+postgres=# \! ls | grep '\.csv'
+my_csv_with_names.csv
+program_number_and_title_pipe_separated.csv
+postgres=# \copy program_id_and_title FROM 'program_number_and_title_pipe_separated.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER) 
+ERROR:  duplicate key value violates unique constraint "program_id_and_title_pkey"
+DETAIL:  Key (id)=(4217) already exists.
+CONTEXT:  COPY program_id_and_title, line 2870
+postgres=# \copy program_id_and_title FROM 'program_number_and_title_pipe_separated.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+ERROR:  invalid input syntax for type integer: "﻿1350"
+CONTEXT:  COPY program_id_and_title, line 2, column id: "﻿1350"
+postgres=# SELECT * FROM program_id_and_title;
+ id | code | title 
+----+------+-------
+(0 rows)
+
+postgres=# \copy program_id_and_title FROM 'program_number_and_title_pipe_separated.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+ERROR:  duplicate key value violates unique constraint "program_id_and_title_pkey"
+DETAIL:  Key (id)=(4246) already exists.
+CONTEXT:  COPY program_id_and_title, line 2900
+postgres=# \copy program_id_and_title FROM 'program_number_and_title_pipe_separated.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+ERROR:  duplicate key value violates unique constraint "program_id_and_title_pkey"
+DETAIL:  Key (id)=(4291) already exists.
+CONTEXT:  COPY program_id_and_title, line 2944
+postgres=# \copy program_id_and_title FROM 'program_number_and_title_pipe_separated.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+COPY 2965
+postgres=# SELECT * FROM program_id_and_title;
+  id  |    code     |                                                                                                             
+                                                                      title                                                       
+                                                                                                                            
+------+-------------+-------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+ 1350 | SN090901    | SOLOMON'S TEMPLE A SHADOW (PATTERN) OF THE NEW TESTAMENT TEMPLE, THE CHURCH (WHICH TEMPLE WE ARE)
+ 1351 | WN091201    | PREDESTINATION: GOD ORDERED THE DESTRUCTION OF THE WORLD TRADE CENTER BY EVIL MEN - HE DOES ALL THINGS - JES
+US HOLDS THE KEYS OF DEATH
+ 1352 | SM091601    | WHY ARAB TERRORISTS CRASHED JET AIRLINERS INTO THE TWIN TOWERS OF THE WORLD TRADE CENTER- THE ANSWER BEGINS 
+IN GENESIS 12:1
+ 1353 | SN091601    | SHADOWS IN THE OLD TESTAMENT -SOLOMON'S TEMPLE, THE BEAMS WERE FITLY FRAMED WITHOUT NAILS, THE CHURCH WAS FI
+TLY JOINED BY THE WORD.
+ 1354 | WN091901    | PREDESTINATION: GOD'S WILL CAUSED THE DEATH OF THE PEOPLE IN THE WORLD TRADE CENTER - HE CREATES EVIL AND KI
+LLS INNOCENT PEOPLE
+ 1355 | SM092301    | ARAB TERRORISTS HAVE DECLARED A HOLY WAR (JIHAD) AGAINST AMERICA - JERUSALEM'S HISTORY FOR THE LAST 2000 YEA
+RS - THEY SHALL FALL BY THE SWORD "UNTIL" --
+ 1356 | SN092301    | SOLOMON'S TEMPLE - THE SHADOWS AND VERY IMAGES OF THE CANDLESTICKS, THE ARK OF THE COVENANT, THE SEA, AND TH
+E ALTAR
+ 1357 | WN092601    | PREDESTINATION: GOD CALLED NEBUCHADNEZZAR AGAINST ISRAEL TO DESTROY THEM. GOD DOES ALL EVIL.
+ 1358 | SM093001    | THE ARABS ARE TERRORIZING AMERICA BECAUSE ISRAEL CELEBRATED CHRISTMASS (FIRE WORSHIP) 900 B.C. -- THEY NEVER
+ KEPT THEIR SABBATICAL YEARS OR ROTATED THEIR CROPS
+ 1359 | SN093001    | THE KINGS AND PROPHETS OF ISRAEL - THE SHADOWS OF SOLOMON'S TEMPLE - HOW TO APPLY A COMMENTARY
+ 1360 | WN100301    | PREDESTINATION- THE TRUE FAST IS PURE RELIGION BY CONFORMING TO THE LIKENESS OF CHRIST - WE VISIT THE FATHER
+LESS (ORPHANOS -COMFORTLESS) AND WIDOW (CHEIRA - NO HUSBAND) IN THEIR AFFLICTION (BLOOD BAPTISM)
+ 1361 | SM100701    | ARAB TERRORISM IS A RESULT OF TREE WORSHIP (CHRISTMAS) IN ISRAEL (JER. 10, ISA. 44) 2900 YEARS AGO
+ 1362 | SN100701    | SOLOMON'S TEMPLE - THE GOLDEN VESSELS - HEZEKIAH SHOWS THEM TO MERODACHBALADAN'S EMISSARIES (ISA. 39) - NEBU
+CHADNEZZAR CARRIES THEM TO BABYLON (II CHRON 36) - BELSHAZZAR PARTIES WITH THE VESSELS AND PAYS THE PRICE (DAN. 5) DEATH
+ 1363 | WN100101    | PREDESTINATION: GOD KILLS WITH "THE BEAST" IN THE NEW TESTAMENT AS WELL AS THE OLD - WE ARE SPECTACLES AND A
+ GAZINGSTOCK
+ 1364 | SM101401    | ARABS ATTACKING AMERICA - THE CAUSE BEGAN IN ISRAEL 3000 YEARS AGO WHEN ISRAEL WENT AFTER BAAL (HERCULES AND
+ TREE (VENUS) WORSHIP- THE CHRIST MASS
+ 1365 | SN011401    | SOLOMON FINISHES THE HOUSE OF GOD - HIS PRAYER FOR ISRAEL "WHEN" SHE SHALL STRAY FROM GOD
+ 1366 | WN101701    | PREDESTINATION: WHO ART THOU THAT REPLIEST AGAINST GOD? HATH NOT THE POTTER POWER OVER THE CLAY OF THE SAME 
+LUMP (REBECCA'S TWINS FROM WOMB) TO MAKE ONE VESSEL UNTO HONOR (JACOB) AND ANOTHER DISHONOR/ESAU
+ 1367 | SM102101    | OSAMA BIN LADEN IS NOT THROUGH WITH AMERICA - HE IS COMING BACK TILL THE DAY OF JUDGEMENT, ARMAGEDDON, THE V
+ALLEY OF JEHOSHAPHAT
+ 1368 | SN102101    | DAVID AND THE PSALMS - THE SONGS OF ISRAEL WRITTEN ABOUT DAVID'S HEARTBREAK AND CONFRONTATIONS WITH HIS ENEM
+IES INCLUDING SAUL, JOAB, ABSALOM (HIS SON) AMNON (HIS SON)
+ 1369 | WN102401    | PREDESTINATION: THE EXCUSE MEN USE TO CONTRADICT ISAIAH 45:7 - "GOD IS NOT THE AUTHOR OF CONFUSION" - WHY AD
+AM SINNED - HE WAS MADE OF CORRUPT DUST. (JIM PREACHES BY CANDLE LIGHT)
+ 1370 | SM102801    | ARAB TERRORISM - THE CHURCH APOSTASY - WE WILL GO THROUGH TRIBULATION AND BE CHANGED AT THE 7TH (LAST) TRUMP
+ - SOME OF US WILL DIE IN THE GREAT PERSECUTION
+ 1371 | SN012801    | SOLOMON: GOD PERFECTS AND ESTABLISHES HIS NAME IN THE HOUSE OF THE LORD - WHOSE HOUSE ARE WE - CHANGE COMES 
+A LITTLE AT A TIME
+ 1372 | WN103101    | PREDESTINATION: IN THE BEGINNING GOD CREATED--AS A POTTER, HE ''REFORMED'' THE CHAOS IN 6 DAYS A PICTURE OF 
+CONFORMING THE ELECT TO THE IMAGE (LIKENESS) OF CHRIST (ROM 8:29)
+ 1373 | SM110401    | THE BRIGHTNESS OF HIS COMING - EYES LIKE FLAMING FIRE- NO PRE- OR MID-TRIB RAPTURE - NO ONE ''LEFT BEHIND'' 
+FOR 7 YEARS. THE CHURCH IS ''HELD DOWN'' TILL THE MAN OF SIN IS COMPLETELY REVEALED BY THE EPIPHANY OF JESUS
+ 1374 | SN110401    | SOLOMON: THE 1ST RIGHTEOUS MAN IN ISRAEL'S HISTORY TO FALL INTO APOSTASY ALLOWING SUN (FIRE) AND MOON (TREE)
+ WORSHIP TO COME INTO ISRAEL WHEN HE MARRIED A THOUSAND WOMEN, CAUSING THE KINGDOM TO BE DIVIDED
+ 1375 | WN110701    | Predestination Is True - I Should Know - I Invented The Greek Language - Preachers Are Ripping The Word Of G
+od To Shreds In Unbelief
+ 1376 | SM111101    | ARAB TERRORISM, CHRISTMAS, THE KLAN (PRIESTS OF BAAL) AND GIVING IN MARRIAGE (PREACHERS MIXING TRUTH WITH A 
+LIE) ARE ALL A PART OF THE SAME PICTURE
+ 1377 | SN111101    | SOLOMON SPLITS THE KINGDOM WITH IDOLATRY FROM JUDAH (SOUTH) CAME THE CHIEF RULER (THE KING); BUT THE BIRTHRI
+GHT WAS JOSEPH'S (EPHRAIM OR NORTHERN ISRAEL)
+ 1378 | WN111401    | WHY PREACHERS WILL NOT PREACH PREDESTINATION - IT WILL ANGER FAMILY AND FRIENDS AND MAKE MANY ENEMIES - IT I
+S A BIBLICAL BUT HATED DOCTRINE
+ 1379 | SM111801    | THE 70 WEEKS OF DANIEL - THE TIME PERIOD MEASURED OUT TO ISRAEL FOR THEIR APOSTASY OF BAAL (SUN) AND GROVE (
+TREE) WORSHIP (CHRISTMAS)
+ 1380 | SN111801    | SOLOMON BRINGS ABOUT THE DIVISION OF ISRAEL INTO TWO KINGDOMS - REHOBOAM REJECTS ADVICE OF THE ELDERS CAUSIN
+G JEROBOAM TO DEFECT WITH THE 10 NORTHERN TRIBES
+ 1381 | WN112101    | PREDESTINATION - GOD IS THE POTTER, WE ARE THE CLAY - HE BEGINS AND FINISHES THE WORK - GEN 1:14-19. GOD SEP
+ARATES LIGHT FROM DARKNESS ON THE 4TH DAY - ISRAEL 400 YRS FROM EGYPT - LAZARUS ON THE 4TH DAY. JESUS COMES AFTER 4000 YRS.
+ 1382 | SM112501    | 10 horns
+ 1383 | SN112501    | A MASTERPIECE OF SCRIPTURE BIOGRAPHY. THE LIFE OF REHOBOAM- SON OF SOLOMON - HIS SIN THAT RESULTS IN THE PRO
+PHECY OF JOSIAH BY NAME - 326 YEARS BEFORE HIS BIRTH
+ 1384 | SM120201    | The 70 Weeks Of Daniel And Christmass Eve (Venus the Genii) And 3 Wishes Of The Tree - Babylon The Origin Of
+ Demons (God/Men) - The System Of Baal (Hercules-Dec. 25) And The Tree (Of Christmas) -The Scattering Of Israel (586 B.C.)
+ 1385 | SN120201    | REHOBOAM (SON OF SOLOMON) JUDGES UNRIGHTEOUSLY-- THE TWO WITNESSES (REV.11) PRIEST AND KING (THE CHURCH)--JO
+SIAH IS PROPHESIED BY HIS VERY NAME 326 YEARS BEFORE HIS BIRTH (I KINGS 13:2)
+ 1386 | WN120501    | PREDESTINATION: THE DEFINITION OF AGAPE - AN OBEDIENT RELATIONSHIP OF A FATHER TO A SON (A KING TO HIS SUBJE
+CTS)
+ 1387 | SM120901    | Daniel's Prayer Concerning The Redemption Of Israel From The Captivity - Gabriel's Answer From God A Time Pe
+riod Called The 70 Weeks Of Daniel
+ 1388 | SN120901    | Josiah Prophesied By Name 326 Years Before His Birth-Cyrus Is Prophesied To "Dry Up The Euphrates" 173 Years
+ Before It Happens Spiritual Euphrates In Rev. 16, 18
+ 1389 | WN121201    | PREDESTINATION: TO BE LIKE JESUS, POOR IN SPIRIT, HUMBLE UNDER THE HAND OF GOD, OBEDIENT UNTO THE CROSS, MOU
+RNING OVER SIN, MEEK UNDER THE YOKE, ETC.
+ 1390 | SM121601    | Christmas-The Custom Of The Heathen- Knowledge Of Idolatry (Self) Without Obedience (Charity-Agape) Puffs Up
+ (I Cor. 8:11) "Meat (Food) Is Doing"
+ 1391 | SN121601    | Jeroboam's Golden Calf Altar-The Man Of God Prophecies Against It--The False Prophet Seduces Iddo- God Punis
+hes The "Man Of God" By Killing Him
+ 1392 | WN121901    | Predestination: The Firstborn (Firstfruits) Or Priesthood, The 24 Elders, The 144000, (The Church), 12 Baske
+ts Of Bread That None Be Lost
+ 1393 | SM122301    | Christmas Is The Saturnalia, Hanukkah Is Cleansing The Temple By Throwing Christmas Out On Dec. 25--Changing
+ A Name By Disguising Evil Does Not Change The Truth.
+ 1394 | SN122301    | Jeroboam Seeks The Help Of Ahijah The Prophet Who Prophesies The Destruction Of All Of Jeroboam's Sons (Fulf
+illed By Baasha) Asa Brings Peace To Judah And Destroys An Army Of A Million Ethiopians
+ 1395 | WN122601    | Predestination: Conforming To The Likeness Of Jesus-Forbearing (Putting Up With) One Another (The Failings O
+f The Fellow Believer)
+ 1396 | SM123001    | Demons Are Born On December 25--Jesus Is God The Savior
+ 1397 | SN123001    | Millennium Is 2000, Not A Thousand Years--Where Two Or Three Are Gathered Together, But Not On Wednesday Nig
+hts--Bind And Loose--Lawful and Unlawful
+ 1398 | WN010202    | Predestination-Like Jesus, not murmuring (grumbling) and complaining, blaming God's orderly arrangement (fat
+e)-accepting whatever God sends our way.
+ 1399 | SM010602    | The 70 Weeks of Daniel- Gabriel's message to Daniel-The time period measured out to Israel in which God will
+ bring His people Israel out of Babylon back to Him (spiritually) Dan. 9:24-27
+ 1400 | SN010602    | Asa, Baasha, Ahijah, and Jeroboam-Kings in Israel and Judah-Their fight for power
+ 1401 | WN010902    | Predestination-God works all things after His counsel-He has, from eternity, determined everything that has 
+not yet happened-We are to be thankful in all things.
+ 1402 | SM011302    | The 70 weeks of Daniel-The end of time is near-Our generation will not pass away until all prophecy comes to
+ pass.
+ 1403 | SN011302    | A review of Israel's history from Adam to Abraham-From the Bondage to the Promised Land-From Judges to the K
+ings.
+ 1404 | WN011602    | Predestination: Believing is conforming to the Image of Jesus-Calling out the names of false teachers-Pharis
+ees, Alexander, Hymenaeus and Philetus, warning about them.
+ 1405 | SM012002    | The 70 Weeks of Daniel-The Bridge of Prophecy from Old to New Testament-We are looking for the 70th week, th
+e last 7 years of time-The first decree and its opposition.
+ 1406 | SN012002    | King Asa; A great paradox (contradiction) in Israel-After 35 years of righteousness and godly fear he turned
+ away from God, hiring Ben-Hadad to fight against Baasha.
+ 1407 | WN012302    | Predestination is True-Babies do not go to Hell when they die-They are innocent (not guilty) The wages of si
+n (not a sin nature) is death. Babies do not sin.
+ 1408 | SM012702    | The 70 Weeks Of Daniel - Israel receives Opposition To The 1st Decree - After 16 Years Of Doing Nothing, Hag
+gai Calls Israel To Resume Rebuilding The Temple
+ 1409 | SN012702    | A Study In The Shadows Of O.T. Kings Asa Dies, Jehoshaphat, His Son, Reigns In Judah, Zimri Then Omri Reigns
+ In Northern Israel - Enter Ahab and Jezebel
+ 1410 | WN013002    | Predestination - The Old Testament Answer To Romans 8:29 - The Prayer Of Jabez (I Chron 4:10) - Only The Spi
+ritual Man Can Accept Christ
+ 1411 | SM020302    | The 70 Weeks of Daniel - The 70th Week, The Last 7 Years Of Time Will Confirm The Covenant - We Are Looking 
+For The Last Week
+ 1412 | SN020302    | Christianity Is Jewish - The Shadow (Ritual) Of The Old Testament - The Very Image (Spiritual) Of The New - 
+The Gentile Church Is Spiritual Israel
+ 1413 | SM021002    | The 70 Weeks Of Daniel - A Summary - The 2nd Decree Re-enforcing The 1st Decree (Ezra 6) - Tatnai The Enemy 
+Of The returnees Is Threatened By Darius The King In This Matter
+ 1414 | SN021002    | Elijah Enters The Scene Of Israel's History - Jezebel And Ahab Make Hercules (Baal) and Venus (The Grove) Th
+e National Religion Of Israel - NO RAIN!
+ 1415 | WN021302    | Predestination: All Tribulation, Affliction, The Strait And Narrow Way, Persecution, Fiery Trials, Daily Cro
+ss, Self Denial Is Ordained By God - We Can "Rest" In That - THIS IS THE SPIRITUAL SABBATH
+ 1416 | SM021702    | The 70 Weeks Of Daniel - How It Is Related To Christmas (Roman Catholicism) The 3rd Decree Of Artaxerxes.
+ 1417 | SN021702    | Ahab Brings Baal And The Grove Into Israel As The National Religion (god and goddess) This Is The 10 Horns (
+10 Tribes) Giving Their Power To The Beast - They Will Also Destroy The Beast.
+ 1418 | WN022002    | Predestination (pro 'orizo) - Resting
+ 1419 | SM042102    | Ezra, Nehemiah, and Daniel - Key Books In Studying Daniel's 70 Weeks
+ 1420 | SN042102    | Ahab And Jezebel - The System That Polluted Israel Came From Babylon And Was Imported To Rome By Way Of Perg
+amos
+ 1421 | WN042402    | How To Witness When You Believe In Predestination (Pro'Orizo) Which Is Mentioned 14 Times In The Bible (Incl
+uding 'Orizo)
+ 1422 | SM042802    | Ezra 1-8, The First 3 Decrees - Ezra 9 and 10, Israel Marries Strange Wives
+ 1423 | SN042802    | A Review Of I And II Samuel And 1st Kings - Ahab & Jezebel Bring Christmas Into Israel
+ 1424 | WN050102    | Predestination: Genuine Salvation Is By True Repentance That Only God Can Bring
+ 1425 | SM050502    | Nehemiah And The 70 Weeks Of Daniel - The 4th Decree
+ 1426 | SN050502    | Elijah Must First Come - John The Baptist Is Elijah
+ 1427 | WN050802    | Predestination To Be Like Jesus - Man Is Depraved In His Nature - He Is "Unlike" Jesus
+ 1428 | SM051202    | The 70 Weeks Of Daniel The 4th Decree - Nehemiah Meets His Opposition
+ 1429 | SN051202    | Israel's History - Tree Worship Is Self Worship
+ 1430 | WN051502    | Like Jesus - That Is What Predestination Is About - Dealing With Our "Little Sins"
+ 1431 | SM051902    | The 70 Weeks Of Daniel - Key Books, Chapters, Verses And Categories When Studying This Foundation Doctrine O
+f All Prophecy
+ 1432 | SN051902    | Elijah - The Word Of God Is Fire From Heaven From The Mouth Of His Prophets
+ 1433 | WN052202    | Predestination To Be Like Jesus - Humble Under The Hand Of God, Which Is Evil Men
+ 1434 | SM052602    | The 70 Weeks Of Daniel - Nehemiah Builds The "Gates" Of The City, Jerusalem
+ 1435 | SN052602    | Elijah - No Rain - Ahab - The Prophets Of Baal - 7000 In Israel That Believe God
+ 1436 | WN052902    | Predestined Like Jesus Fitly Joined In "Suffering"Fellowship - Giving More Honour To The Uncomely Parts That
+ Lack
+ 1437 | SM060202    | The 70 Weeks Of Daniel - Salvation Is The Wall Of Fire - Nehemiah Begins Building The Wall
+ 1438 | SN060202    | Elijah Anoints Hazael, Jehu And Elisha - Hazael To Smite Israel, Jehu To Execute Jezebel, Elisha To Finish H
+is Work
+ 1439 | WN060502    | Predestination: Like Jesus fulfill All Righteousness - Civil And Religious
+ 1440 | SM060902    | The 70 Weeks Of Daniel From Genesis Through Revelation - Signs Of The End Of Time
+ 1441 | SN060902    | Ahab, Jezebel, Naboth and Elijah
+ 1442 | WN061202    | Predestination: God Is Prejudiced - We Are To Judge Righteous Judgment - Like Jesus
+ 1443 | SM061602    | The 70 Weeks - The "Land" Jeremiah Laments Judah's Destruction
+ 1444 | SN061602    | The Kingdom Split - Ephraim And Judah - The Kingdom Restored In The Valley Of Dry Bones - The Last Days - Th
+e Death Of Jezebel
+ 1445 | WN061902    | Predestination: Unlike Jesus - Judging, Gossip, Slandering, Tattlers and Busybodies
+ 1446 | SM062302    | The Reason And Purpose For The 70 Weeks Of Daniel
+ 1447 | SN062302    | The Death Of Ahab
+ 1448 | WN062602    | Predestination - What Must A Man Do To Be Saved? God Must Conform Him To The Likeness Of Jesus
+ 1449 | SM063002    | Roman Catholicism And The 70 Weeks Of Daniel
+ 1450 | SN063002    | Drying Up The Euphrates (Spiritual And Literal) Chaldeans Move To Pergamos
+ 1451 | WN070302    | Predestination: Gossiping Is Talking To The Devil (Unlike Jesus)
+ 1452 | SM070702    | The 70 Weeks - Restore And Build Heavenly Jerusalem, The Church, The Bride Coming Down From Heaven (Rev 21)
+ 1453 | SN070702    | Athaliah - The Daughter From Hell
+ 1454 | WN071002    | Predestination: All Right Turns And Left Turns Are From God - Thinking Like God, Not An Opinion
+ 1455 | SM071402    | The 70 Weeks Of Daniel - Building The Walls Of Jerusalem (The Church) With Opposition
+ 1456 | SN071402    | How To Identify A True Prophet - Like Elijah - They Will Call Fire (The Word Of God) From Heaven
+ 1457 | WN071702    | Predestination: To Be Like Jesus - How We As Believers Are To Live And Treat One Another In The Church (Shee
+pfold)
+ 1458 | SM072102    | The 70 Weeks Of Daniel - The Foundation of New Jerusalem, The Bride Of Christ, The Church
+ 1459 | SN072102    | Elijah, Elisha And John The Baptist Restoring The Kingdom (7 minute jump in audio from 7-14 minutes)
+ 1460 | WN072402    | Predestination - All That The Father Giveth Me Will Be Like Jesus
+ 1461 | SM072802    | Controversy Among Scholars Concerning The 70 Weeks Of Daniel - The "7 Weeks Three Score And Two Weeks" - Why
+ The Prophecy Begins In 444 B.C. (The 4th Decree) In The 2nd Chapter Of Nehemiah
+ 1462 | SN072802    | Jehoshaphat - A Good, Godly Man with One Bad Habit - He Hangs Around With The Wrong People
+ 1463 | WN073102    | Predestination: Why Can I Find These Verses And Other Preachers Can't
+ 1464 | SM080402    | The 70 Weeks Of Daniel - Until The Times Of The Gentiles Be Fulfilled, There Will Be No Remedy (No Answer Fo
+r The World's Ills)
+ 1465 | SN080402    | Jehoshaphat: A Righteous King, But What Was He Thinking Aligning Himself With Ahab And Ahaziah
+ 1466 | WN080702    | Predestination Is About Doing Something - Conformed - Fitly Formed - In The Body (Gifts Of The Church)
+ 1467 | SM081102    | The 70 Weeks Of Daniel - A Result Of False Teaching In Israel
+ 1468 | SN081102    | Review On How And Why We Study The History of Israel - The Nations Surrounding Them
+ 1469 | WN081402    | Why Predestination Must Be Preached - It Is A Necessity For The Comfort Of The Saints
+ 1470 | SM081802    | The 70 Weeks Of Daniel - The Desolation Of Abomination Will Be Christ, The One True Sacrifice Ceasing In Us,
+ The Temple OF God
+ 1471 | SN081802    | Elisha, The Son Of A Noble Man, Waiting On God To Call Him In Order To Fulfill The Office Of Elijah
+ 1472 | WN082102    | Predestination - Abstract And Concrete - Sin Is A Female Concept
+ 1473 | SM082502    | The 70 Weeks Of Daniel - Messiah The Prince - Jesus Sets His Face To Go To Jerusalem - Baptism - The Way Out
+ Of Babylon
+ 1474 | SN082502    | Pretrib Rapture And Premillennialism Is False Doctrine - Kingdom Of God/Heaven Is The Church
+ 1475 | WN082802    | Predestination: God Is Positive We Are Negative - God Has Arranged All Events Of Our Lives (Good And Bad) Fo
+r Our Good (The Predestinated Elect)
+ 1476 | SM090102    | The 70 Weeks Of Daniel - Time Factors - The Desolation Of Abomination Is Future, In The Midst Of The 70th We
+ek
+ 1477 | SN090102    | Elijah And Elisha - The Prophet And The Heir To His Office
+ 1478 | WN090402    | Predestination - God Speaks To Inanimate Objects - Rocks, Water, Fire, Snow, Lightning, Etc.
+ 1479 | SM090802    | The 70 Weeks Of Daniel - The Man Of Sin - The Son Of Perdition - Old Testament Shadow Antiochus Epiphanes - 
+Abomination
+ 1480 | SN090802    | Elisha - Willing To Give Up All And Follow The Most Hated Man In All Of Israel - Elijah
+ 1481 | WN091102    | Predestination: God Is A Terrorist! He Is Prejudiced - God Has A Good Will And An Evil Will
+ 1482 | SM091502    | The 70 Weeks Of Daniel - Antiochus Epiphanes - The Old Testament Shadow Of The Man Of Sin (The Antichrist) -
+ Daniel 11
+ 1483 | SN091502    | Elijah And Elisha - The Sons Of The Prophets Have A Morbid Curiosity About The End Of Elijah - They Are Busy
+bodies
+ 1484 | WN091802    | Predestination: God Creates Evil
+ 1485 | SM092202    | The 70 Weeks Of Daniel - The Beast, Antiochus Epiphanes, The Shadow Of The Man Of Sin In The Old Testament
+ 1486 | SN092202    | Elijah - The Chariot Of Fire, The Whirlwind Of God - Elisha Assumes The Office Of Prophet
+ 1487 | WN092502    | Predestination: Jeremiah Speaks Of God Creating Evil
+ 1488 | SM092902    | The 70 Weeks - The Voice Of The Dragon And False Prophet - Flattery And Smooth Words
+ 1489 | SN092902    | Israel - A Man, A Family, A Nation - Ephraim The Inheritance - Elisha Approved Of God
+ 1490 | WN100202    | Predestination - To Be Like Jesus And Jeremiah - Persecuted And Hated Without A Cause
+ 1491 | SM100602    | The 70 Weeks - Sacrifice And Oblation Cease - The Apostasy (Removal Of Daily Cross) - Man Of Sin Revealed
+ 1492 | SN100602    | Family Feud - Jehoram And Ahaziah (Both Sets) Learn By Their Fathers' (Jehoshaphat And Ahab) Example
+ 1493 | WN100902    | Predestination - 144,000, The Church, The Firstfruits, The Firstborn, The Priesthood, Twelve Baskets Full
+ 1494 | SM101302    | The 70 Weeks - Flattery Is Wresting (Twisting) The Word Of God - Taking Bribes And Blinding The Eyes
+ 1495 | SN101302    | God Preserves The Seed Of Judah - Ahaziah And Joash - Lineage In Matthew
+ 1496 | WN101602    | Predestination - God Has Not Predestined Us To Sin To Be "Unlike" Jesus - He Has Tempted Us To Do Good, Like
+ Abraham
+ 1497 | SM102002    | Christmas And The 70 Weeks Of Daniel. What Is Wrong With Christmas? What Does It Do To Our Lives?
+ 1498 | SN102002    | Complexities Of The Chronology Of The Kings - The Death Of Athaliah
+ 1499 | WN102302    | Predestination: Being "Like" Jesus In The Context (Syntax) Of Scripture - The Virtues Of Christ Are Conditio
+nal
+ 1500 | SM102702    | The 70 Weeks And Christmas - Why Do Men, Who Call Themselves Believers Insist On Doing What God Commands The
+m Not To Do?
+ 1501 | SN102702    | Israel's History – Abraham, Isaac, Jacob (And Esau) Through The Books Of The Kings
+ 1502 | WN103002    | Preachers Hate Predestination, But It's True - It's About Our Being Changed To The Likeness Of Jesus - The B
+ible Says So!
+ 1503 | SM110302    | Christmas - Israel Eats Their Children (Cannibalism) Passing Their Firstborn Through The Fire - The Reason F
+or The 70 Weeks Of Daniel
+ 1504 | SN110302    | Jehoshaphat Had An Ahab In His Life, Because He Wanted The Advantage Of Being Liked By The World.
+ 1505 | WN110602    | Predestination - "Denying The Lord That Bought Them" - What Does It Mean? The Invitation Hymn (Freewill) Is 
+Roman Catholicism
+ 1506 | SM111002    | Christmas Is A Perversion Of The Passover - The Last Supper Was Passover, Not Crackers And Grape Juice
+ 1507 | SN111002    | Jehoshaphat, Jehoram, And The Kings Of Edom Meet Elisha Through The King Of Israel's Servant
+ 1508 | WN111302    | Predestinated To Be Compassionate Toward The Brethren
+ 1509 | SM111702    | A Picture Of Christmass (Tree & Fire Worship) Partaking Unworthily Of The Passover
+ 1510 | SN111702    | Elisha And The 3 Kings - Trusting In The Lord And Leaning Not To Our Own Understanding - Digging Ditches
+ 1511 | WN112002    | Predestination: To Be Like Jesus Is To Forgive Repentant Murderers, Adulterers And Harlots
+ 1512 | SM112402    | Christmas And The Passover - Eating Flesh And Drinking Blood - Shewing The Lord's Death - Partaking Unworthi
+ly
+ 1513 | SN112402    | Elisha Sets An Example - Widows And Orphans - Faithful Over Few Things
+ 1514 | WN112702    | Predestinated To Forgive Jacob For His Devious, Underhanded, Lying Treachery
+ 1515 | SM120102    | "Merry'' Christmas, Passover, The Lord's Supper, The Day Of Preparation, The Day Of The Week That Jesus Died
+ 1516 | SN120102    | TITHE
+ 1517 | WN120402    | Predestination: How Sheep Are To Treat One Another - With Compassion, Gentle, Mercy, Meek, Etc.
+ 1518 | SM120802    | The Passover Verses Christmas - The Week Jesus Died - The Day Of His Death
+ 1519 | SN120802    | The Tithe - The Law - Alive And Well!
+ 1520 | WN121102    | Predestinated To Be Hated And Persecuted By Your Family And Friends -- Like Jesus
+ 1521 | SM121502    | Yule - A Swastika Christmas
+ 1522 | SN121502    | Tithe - These Ought Ye To Have Done
+ 1523 | WN121802    | Predestination - Like Jesus - Poor, Mourning, Hungering, Groaning, Desiring Our New House
+ 1524 | SM122202    | The Christmas Jesus Is Artificial - He Is A Product Of Marrying Truth And A Lie
+ 1525 | SN122202    | The Tithe - Still In Effect - Ritual Is Nailed To The Cross
+ 1526 | WN122502    | Predestination: Like Jesus - Confess Christ "Daily"
+ 1527 | SM122902    | Why I Hate Christmas So Much And Preach Against It All Year Long
+ 1528 | SN122902    | The Tithe Of The Law - Two Witnesses
+ 1529 | WN010103    | Predestination: Why Are People Mad At Me For Saying What God Said
+ 1530 | SM010503    | Let Us Make Us A Jesus - All The World Is Drunk
+ 1531 | SN010503    | The Spiritual Day Of Atonement - Entering Into The Holiest By The Blood Of Jesus (Tithe Series)
+ 1532 | WN010803    | Predestination: God's Mercy Is On Them That Fear Him
+ 1533 | SM011203    | The Spiritual Drunkard Is Proud And Cannot Pay Attention. He Has Spiritual Hypothermia
+ 1534 | SN011203    | The Tithe - Jots And Tittles - The Law Is Still Here.
+ 1535 | WN012203    | Predestination: Like Jesus And Paul, Men Will Envy You And Desire To Kill You
+ 1536 | SM012603    | The Church In America Has Made Itself A "Name" - Redefining, Adding And Subtracting From The Word Of God
+ 1537 | SN012603    | Preachers (Priesthood) That Ministers Of Holy Things Are Partakers Of The Tithe Of The Altar
+ 1538 | WN012903    | Predestination: Sheep "Hear" The Voice Of The Shepherd - Goats Can't Hear
+ 1539 | SM020203    | In The Name Of Jesus - Jehovah, The Name Of God Means "Self Existent" - To Be!
+ 1540 | SN020203    | The Tithe - Two Parts Of The Law - The Letter And The Spirit
+ 1541 | SM020903    | Babylon Is Fallen (Literal) Is Fallen (Spiritual) Charismatics Have Made Themselves A Name With The Faith He
+aling Doctrine
+ 1542 | SN020903    | The Tithe - What It Was Used For - The Preacher Of The Gospel Is The New Testament Priesthood
+ 1543 | WN021203    | Predestination: Tame (Meek) Like Jesus - Ruling With A Rod Of Righteousness
+ 1544 | SM021603    | The Charismatics Have Made Themselves A "Name" (Doctrine) - Calling Things That Be Not - Is Resurrection
+ 1545 | SN021603    | The Law And The Tithe - The Spirit And The Letter - The Law Is Still Here Because Sin Is Here
+ 1546 | WN021903    | Predestination: When The "Perfect" Is Come - The Church Maturing To "Full Age"
+ 1547 | SM022303    | The Name Of The Lord - What It Means! It Opposes "Let Us Make Us A Name"
+ 1548 | SN022303    | The Tithe And The Law - Circumcision (Jews) and Uncircumcision (Gentiles)
+ 1549 | WN022603    | Predestination: God's Works Were Finished From The Foundation Of The World - Before The World Began
+ 1550 | SM030203    | Whosoever Shall Call On The "Name" Of The Lord - Only Believers Call On God's Authority In Prayer
+ 1551 | SN030203    | God's Israel - God's Law - God's Jew Dispensationalist View Of The Jew (Tithe/Law Series)
+ 1552 | WN030503    | Predestination: The Sheep Of God's Flock - Given To Jesus - Not One Will Perish
+ 1553 | SM030903    | "Ask" In The Name Of Jesus - Keep His Commandments - Do Things Pleasing In God's Sight
+ 1554 | SN030903    | The Law - Anglo Israel - The White Supremacist View Of The "Jew"
+ 1555 | WN031203    | Predestination: What We Believe It Is!
+ 1556 | SM031603    | Easter Is The Death And Resurrection Of Mardi Gras (Shrove Tuesday) The God/Goddess Of Spring
+ 1557 | SN031603    | The Lost Sheep Of Israel - Sheep Without A Shepherd - Anglo-Israelism
+ 1558 | WN031903    | Predestination: God Has Free Will Because He Is A Heretic - Hanging Around "Self Will" Makes You Dirty
+ 1559 | SM032303    | Easter Is Not The Resurrection - Jehovah Is The Fertility God
+ 1560 | SN032303    | The Fallacy Of Anglo-Israelism - The Throne Of Israel Is Preserved Through Jehoiachin, Not Zedekiah
+ 1561 | WN032603    | Predestination: Patient And Longsuffering Through The Fiery Trial - It Is A Must In The Life Of The Elect
+ 1562 | SM033003    | Information (Knowledge) - It Exposes Sin - Men Hate It
+ 1563 | SN033003    | Twisting Scriptures - Anglo Israelism - KKK Doctrine
+ 1564 | WN040203    | Predestination: God Creates And Possesses Sin - He Places It On Vessels Of Wrath Fitted For Destruction
+ 1565 | SM040603    | Resurrection Is Death To Self
+ 1566 | SN040603    | Anglo Israel Klan Doctrine - Spirits In Prison - God's Gentile Israel
+ 1567 | WN040903    | Predestination: "I Know I'm Saved" - Knowing Is Dying
+ 1568 | SM041303    | The Resurrection Is The Gospel, The Baptism Of Repentance - Prepare The Way Of The Lord--
+ 1569 | SN041303    | Where The Klan Doctrine Began -- The Sons Of God Married The Daughters Of Men
+ 1570 | WN041603    | Predestination: Conscience Toward God, Death To Self, Comes By Voting With The Inner Man
+ 1571 | SM042003    | In The Bible - Two Baptisms - Water And Holy Spirit - Now There Is One Baptism
+ 1572 | SN042003    | Anglo Israelism - A Perverting Of Scripture To Justify Their Doctrine
+ 1573 | WN042303    | Predestination: Resting In The Sabbath - Contentment - To Ward Off Self
+ 1574 | SM042703    | Baptism - "IN"
+ 1575 | SN042703    | Anglo Israelism - Outrageous Doctrine
+ 1576 | WN043003    | Predestination - "Pro" From Eternity - Rest In The Spiritual Sabbath
+ 1577 | SM050403    | Baptism And Vampires
+ 1578 | SN050403    | What God Means By Intermarriage and Why Not (Anglo Israel Series)
+ 1579 | WN050703    | Predestination: "Ordained"
+ 1580 | SM051103    | One Baptism - Holy Spirit
+ 1581 | SN051103    | KuKlux Klan Doctrine - Giving In Marriage
+ 1582 | WN051403    | Predestination: Why Men Believe In Freewill - They Don't Know How Wicked They Are
+ 1583 | SM051803    | Baptism And John The Baptist
+ 1584 | SN051803    | A Chosen Generation - Anglo Israelism
+ 1585 | WN052103    | Predestination: Entering Into The Sabbath (Rest) By Belief
+ 1586 | SM052503    | Baptism Comes From Our Mouths -- Baptism Is The Washing Of Clothing
+ 1587 | SN052503    | British Israelism
+ 1588 | WN052803    | Predestination: Sunday And The Sabbath
+ 1589 | SM060103    | Baptism: Entering The Kingdom By The Finger Of God - The Spirit - The Word
+ 1590 | SN060103    | Back To Israel - A Review Of The Kings
+ 1591 | WN060403    | Predestination: Sanctify Is To Consecrate - Conceptual Thinking
+ 1592 | SM060803    | Baptism: Tongues Of Fire - Filled With The Holy Ghost Is Speaking The Truth
+ 1593 | SN060803    | Elisha Begins The Miracles Of His Ministry - Waterholes Raising The Dead Death In The Pot
+ 1594 | WN061103    | Predestinated To Repentance And Be Like Jesus
+ 1595 | SM061503    | Confusion Of Languages - 3 Feast Pilgrimages To Jerusalem - Jews From Every Nation Under Heaven
+ 1596 | SN061503    | All The Bible Points To Israel As A Nation (I Sam - II Chron) - Elisha And Naaman
+ 1597 | WN061803    | Predestination: How We Know The Bible Is True - By The Orderly Arrangement Of God
+ 1598 | SM062203    | Baptism - Tongues - "Utterance" - Easy To Understand
+ 1599 | SN062203    | The Kings And Priests Of Israel - Judging Righteous Judgment - Offering Acceptable Sacrifice
+ 1600 | WN062503    | Predestination: God Created Sin - He Wants It To Happen
+ 1601 | SM062903    | Baptism: The Last Days - The Gentile Elect
+ 1602 | SN062903    | Israel Review And Naaman's Baptism
+ 1603 | WN070203    | Predestination: Answers For Those Who Object To God Creating Evil And Sin
+ 1604 | SM070603    | Tongues - Understanding Acts Chapter 2 - Tongues Are "Dialects" Of The Koine
+ 1605 | SN070603    | Israel's Wives And Biographical Sketch Of Naaman
+ 1606 | WN070903    | Predestination: When God Says "I Create Evil And Sin", Men Argue With God When They Don't Believe It
+ 1607 | SM071303    | Confusion Of Tongues Is A Confusion Of Definition With No Answers
+ 1608 | SN071303    | A Review Of David & Saul - The Little Maid Of Israel
+ 1609 | WN071603    | Predestination - God Does Everything, Creating Evil And The Feminine Orge (Wrath/Vengeance) In Man
+ 1610 | SM072003    | Preachers Have A Confusion Of Tongues With Their False Doctrine - Stand For Truth Against A Lie
+ 1611 | SN072003    | Review Of II Samuel - Naaman A Picture Of The Proud Being Humbled
+ 1612 | WN072303    | Predestination: How To Study - Setting Up Sections Of Scripture
+ 1613 | SM072703    | Proselyte Circumcision And Baptism Blotted Out - Now It Is Spiritual
+ 1614 | SN072703    | Questions And Answers About Israel And Its Characters
+ 1615 | WN073003    | The Prosperity Gospel - The Prosperity Lie
+ 1616 | SM080303    | Tongues: Miracles Were To Verify Jesus - Sun Turned To Darkness - Word Of Knowledge (Gnosticism)
+ 1617 | SN080303    | A Review Of I Kings - Naaman Dips 7 Times
+ 1618 | WN080603    | Predestination: Sections Of Scripture - How To Deal With People When Confronting Them With The Bible
+ 1619 | SM081003    | Tongues - The Gifts Of The Spirit - As It Pleased God - Agape - The Perfect
+ 1620 | SN081003    | Review Of Gideon And Other Judges - Naaman Baptized Confesses Jehovah
+ 1621 | WN081303    | Predestination: Chastened And Scourged By God
+ 1622 | SM081703    | Gnosticism - A Word Of Knowledge - Gifts Of The Spirit (Tongues Series)
+ 1623 | SN081703    | Review I Kings - Rehoboam And Jeroboam - Naaman Washes Seven Times, The Number Of Divine Refinement
+ 1624 | WN082003    | Predestination - Sections Of Scripture - The Hearing Ear - The Seeing Eye - The Circumcised Heart - The Stup
+id Man
+ 1625 | SM082403    | Gnosticism: The Colossian Essene Heresy - A Parallel Gospel
+ 1626 | SN082403    | Review Of History - The Kings - Seven Candlesticks - Divine Refinement
+ 1627 | WN082703    | Predestination And Election: Sections Of Scripture Who Are The Elect? What Is Election? What Are We Elected 
+Unto?
+ 1628 | SM083103    | Tongues: The Sign To Preach The Gospel (Resurrection) To The Gentiles, The Spirits In Prison
+ 1629 | SN083103    | A Review Of The Kings - Elijah Gets Weary And Wants To Die
+ 1630 | WN090303    | Predestination - Will, Counsel, Purpose, Tithemi, Keimai
+ 1631 | SM090703    | Tongues: Resurrection, The Gospel, The Only Sign To The Unbeliever
+ 1632 | SN090703    | A Review Of I Samuel & I Kings, Saul & Ahab
+ 1633 | WN091003    | Predestination: Adding And Diminishing The Word Of God - Horizo Put To An Oath In The Border
+ 1634 | SM091403    | A Confusion Of Tongues In America - You Must Be Hated And Persecuted In Order To Be A Godly Man
+ 1635 | SN091403    | A Review Of Elijah And Elisha - Passing Of The Mantle
+ 1636 | WN091703    | Predestination: The Last Will And Testament Of Jesus Christ, Our Example
+ 1637 | SM092103    | Tongues: A Voice With A Certain Sound - I Cor.14
+ 1638 | SN092103    | 7
+ 1639 | WN092403    | Predestination Is Not Respect Of Persons
+ 1640 | SM092803    | The Two Jesus's Of The Bible - Two Truths, Two Gospels
+ 1641 | SN092803    | 7 - Blood Baptism And 4
+ 1642 | WN100103    | Shadows (Rituals) Of The Old Testament, Very Image (Spiritual) Of The New - Day Of Atonement, Ark Of Covenan
+t, The Veil, And More
+ 1643 | SM100503    | The Other Jesus, The Spirit, Anti Christ, Another Truth - Greater Is He That Is In You
+ 1644 | SN100503    | Seven - Revelation 1
+ 1645 | WN100803    | Predestination: The Orderly Arrangement Of The Rituals In Old Testament And The Spiritual In The New - Circu
+mcision And Uncircumcision - The Spiritual Jew
+ 1646 | SM101203    | Another Jesus, The Christmas Jesus, The Easy Jesus
+ 1647 | SN101203    | 7 Churches - 7 Candlesticks - 7 Stars - 7 Angels - 7 Spirits - The Glossary of Rev. 1
+ 1648 | WN101503    | Predestination: The Passover - The Shadow - And Very Image
+ 1649 | SM101903    | Christmas Is Apostasy - It Removes The Daily Cross And Self Denial
+ 1650 | SN101903    | 7 - The Seven Angels With Seven Trumpets - The Refined Church Sounding The Truth
+ 1651 | WN102203    | Carey Yates and Mike Lyda Fill In For Jim On Wednesday Night
+ 1652 | SM102603    | Christmas Is A Convolution of the "Real" Jesus- The Swastika and Santa Claus
+ 1653 | SN102603    | Revelation Is A Book About the New Testament Church Patterned After The Old Testament Temple- 24 Elders, Gol
+den Crowns And the Four Beasts
+ 1654 | WN102903    | Predestination: God's Arrangement Of The Literal (Ritual) And The Spiritual Passover
+ 1655 | SM110203    | Christmas Is The Mass Of Roman Catholicism - "Eat Flesh And Drink Blood" Is Telling Truth And Partaking In A
+ Slaughter
+ 1656 | SN110203    | Seven - Revelation, A Picture Of The Temple, Its Ministry And Services - The Altar Of Incense And Prayers Of
+ The Saints
+ 1657 | WN110503    | Predestination: God Is Doing Everything We Are To Rest In The Spiritual Sabbath (this is not Saturday or Sun
+day).
+ 1658 | SM110903    | Christmas - Jehovah Is The Fertility God - Good Tidings Is Preaching The Gospel, The Daily Resurrection
+ 1659 | SN110903    | Seven - The Spiritual Euphrates, The Fall Of Spiritual Babylon
+ 1660 | WN111203    | Predestination: The Spiritual Sabbath (Rest) Is Believing God - No Sabbath Is Unbelief
+ 1661 | SM111603    | Christmas: Cannibalism - Israel Ate Their Children
+ 1662 | SN111603    | Seven - The 2nd Trump - Babylon, A Burnt Mountain Cast Into The Sea
+ 1663 | WN111903    | Predestination: Keep Sabbath Holy - Honour Father And Mother - Enter Rest By Believing God
+ 1664 | SM112303    | Constantine Mixed Pagan Sun Worship With Christianity And Called It Christmas (Xmass)
+ 1665 | SN112303    | Seven - Revelation - The 7 Stars - Pleiades - The Morning Star - Jesus
+ 1666 | WN112603    | Predestination: Entering The Spiritual Sabbath By Taking No Thought For Your Life
+ 1667 | SM113003    | Christmas: The Tree And Fire Worship Of Israel Trace Back Through Tyre, Babylon, Pergamos Then To Rome - It 
+is The Mass Of Rome
+ 1668 | SN113003    | Seven - A Review Of Revelation Chapter 1 Through Chapter 6
+ 1669 | WN120303    | Predestination: The Older We Get, The More We Rest In The Sabbath
+ 1670 | SM120703    | Christmas: Man's Excuse For Doing That Which God Says Not To Do
+ 1671 | SN120703    | Seven: Revelation Israel, The Lineage Of Adam The Sevened Church
+ 1672 | WN121003    | Predestination: Faith Is Believing In The Predestination Of God - It Is Resting In His Sabbath
+ 1673 | SM121403    | Christmas Is Pagan - Two Babylons Documentation - Withdraw From Sin Or Get Dirty
+ 1674 | WN121703    | Predestination: God Has Preordained The Vessels Of Mercy - Vessels Of Wrath - All Events And The Timing Of E
+verything That Will Ever Happen
+ 1675 | WN122403    | Predestination: Entering Into Rest (The Spiritual Sabbath) By The Faith Of Abraham
+ 1676 | SM122803    | Christmas: The Greatest Hoax Ever Perpetrated On Humanity - It's A Family Thing
+ 1677 | SN122803    | Revelation: 7 The End Of Time In Chapters 6, 8, 10,11, 14, 16, 18, 19 - The 144,000
+ 1678 | WN123103    | Predestination: Believers Go Back To Their Sin
+ 1679 | SM010404    | Spiritual Channukah - Cleansing This Temple - Separating From The World
+ 1680 | SN010404    | Revelation: A Book Of 7's - The Bottomless Pit, Scorpions, Two Witnesses And Binding Satan
+ 1681 | WN010704    | Predestination: Vessels Of Mercy Hemmed In And Protected Unto Faith - Vessels Of Wrath Protected Till Sin Sl
+ays Them
+ 1682 | SM011104    | Preachers Are Teaching False Doctrines; Democracy And Capitalism, Good Words And Fair Speeches, Supposing Ga
+in Is Godliness
+ 1683 | SN011104    | 7 Of Revelation: The Two Witnesses - The Two Olive Trees, Priest and King - The Two Anointed Ones Standing B
+efore The God Of The Earth
+ 1684 | WN011404    | Predestination: Self Is Unbelief - No Sabbath - No Rest - Death To Self Believes God And Enters Into His Res
+t
+ 1685 | SM011804    | 1 cor 10
+ 1686 | SN011804    | Seven of Revelation: Scorpions And The Bottomless Pit
+ 1687 | WN012104    | Predestination: Unbelief Is No Rest, Staggering, Doubting - - It Is Self
+ 1688 | SM012504    | False Teachers: Contradicting God And Arguing With His Prophet Ends In Death
+ 1689 | SN012504    | Seven - Revelation: Joint-heirs (7 x 153) - Factorial 3 - The Trinity Function - 7 Trumpets - Satan Bound In
+ The Bottomless Pit
+ 1690 | WN012804    | Predestination: Getting Rid Of Self
+ 1691 | SM020104    | False Doctrine of Baptists, Pentecostals and Charismatics
+ 1692 | SN020104    | 7 Of Revelation - The 7 Angels - The 7th Trumpet - The Mystery Of God Complete - God's Enemies Destroyed
+ 1693 | WN020404    | Predestination: Good And Evil Come From God - We Can Rest In That
+ 1694 | SM020804    | False Doctrine Of The Charismatics - "The Word Of Faith" - What It Really Means
+ 1695 | SN020804    | 7 of Revelation - The 7 Heads Of The Beast Are 7 Capital Cities (Mountains)
+ 1696 | WN021504    | Predestination: Biblical Algebra - Adding To Faith Is Adding To Your Sabbath Rest
+ 1697 | SM021504    | False Doctrine: - Charismatic Chaotic Doctrine
+ 1698 | SN021504    | Revelation - 7: Pre-Trib, Mid-Trib, or Post-Trib Rapture? At The Last Trump!
+ 1699 | SM022204    | False Doctrine of the Charismatics- Death and Life in the Power of the Tongue- Saying to this Mountain--
+ 1700 | SN022204    | Revelation and 7- Rapture: The Time Factor- No Pretrib, No Midtrib, No Preterism- "This Generation" (Luke 21
+:32)
+ 1701 | WN022504    | Predestination: Who Is The Killer Of All Men? God!
+ 1702 | SM022904    | False Doctrine: "He Healeth Our Diseases" - Afflicted, Persecuted And Pierced By The Rich
+ 1761 | SM080804    | False Doctrine: When You Hang Around False Teachers, You Get Dirty
+ 1703 | SN022904    | Revelation - 7: Rapture, When? Kingdom Of God/Heaven "At The Last Trump" Christ Revealed Man Of Sin Revealed
+ 1704 | WN030304    | Predestination: God Caused The Pharisees To Kill Jesus Over Their Halakah (Traditions)
+ 1705 | SM030704    | Charismatic Doctrine Is False - No Distinct Meaning Of The Word "Binding And Loosing" - "Hundredfold Blessin
+g"
+ 1706 | SN030704    | Revelation And 7: Seven Angels - Rapture - Last Trump - Millennium - 2000 Years - The End Of Time
+ 1707 | WN031004    | Predestination - God Kills Using Evil Men As A Weapon - He Used The Pharisees To Murder Jesus - It Was All A
+bout Their Halakah (Tradition)
+ 1708 | WN031704    | Predestination: Who Killed Jesus? The Pharisees Over The Traditions Of Their Fathers - Who Is My Neighbor?
+ 1709 | SM032104    | Charismatic Doctrine - Leading The Sheep Astray - "Praise And Worship" - Praise Is Confessing (Fully Agreein
+g With) Christ And Our Sins
+ 1710 | SN032104    | Revelation And Seven - Seven Angels Clothed In White - The Song Of Moses - 7 Vials - 7 Plagues
+ 1711 | WN032404    | Predestination: God Does Everything, Including Evil - He Withdrew Job From His Purpose And Hid His Pride Fro
+m Him
+ 1712 | SM032804    | Charismatic False Doctrine Of "Praise" and Worship - Giving In Marriage
+ 1713 | SN032804    | Revelation - The 7 Angels With 7 Trumpets And 7 Vials - The 10 Plagues Of Egypt
+ 1714 | WN033104    | Predestination: God Creates Evil - Mothers Killing Babies, Serial Killers, Slaughter, Rape, Cannibalism, Ill
+icit Sex And Adultery
+ 1715 | SM040404    | Charismatic Liars - Touching The Lord's Anointed Doctrine - The Poor Widow's Mite - The Fallacy Of Giving To
+ Get From God
+postgres=# 
