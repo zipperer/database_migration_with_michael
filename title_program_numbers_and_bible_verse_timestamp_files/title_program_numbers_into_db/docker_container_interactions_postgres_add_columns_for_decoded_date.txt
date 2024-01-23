@@ -1,0 +1,94 @@
+Last login: Tue Jan 23 12:11:53 on ttys002
+Welcome to ayer, andrew.
+[andrew@ayer title_program_numbers_into_db (main % u=)]$ docker ps
+CONTAINER ID   IMAGE                 COMMAND       CREATED        STATUS       PORTS                    NAMES
+b8566b142e10   python3-pytest-mypy   "python3"     4 weeks ago    Up 4 weeks                            jovial_knuth
+bafb1425fb80   postgres_ubuntu:1     "/bin/bash"   2 months ago   Up 4 weeks   0.0.0.0:5433->5432/tcp   az_postgres_ubuntu1
+[andrew@ayer title_program_numbers_into_db (main % u=)]$ docker cp program_number_and_title_pipe_separated_with_columns_for_day_and_date.csv az_postgres_ubuntu1:/
+[andrew@ayer title_program_numbers_into_db (main % u=)]$ docker exec -it az_postgres_ubuntu1 /bin/bash
+root@bafb1425fb80:/# psql --username postgres
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# \l
+                                     List of databases
+          Name           |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   
+-------------------------+----------+----------+---------+---------+-----------------------
+ db_for_tracking_changes | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ db_from_restore         | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ db_from_restore2        | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ db_from_restore3        | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ postgres                | postgres | UTF8     | C.UTF-8 | C.UTF-8 | 
+ template0               | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                         |          |          |         |         | postgres=CTc/postgres
+ template1               | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +
+                         |          |          |         |         | postgres=CTc/postgres
+(7 rows)
+
+postgres=# \d
+                                      List of relations
+ Schema |                            Name                            |   Type   |    Owner    
+--------+------------------------------------------------------------+----------+-------------
+ public | edit_history                                               | table    | postgres
+ public | edit_history_id_seq                                        | sequence | postgres
+ public | example_table_with_column_that_tracks_modifications        | table    | andrew_user
+ public | example_table_with_column_that_tracks_modifications_id_seq | sequence | andrew_user
+ public | my_new_table                                               | table    | andrew_user
+ public | my_new_table_id_seq                                        | sequence | andrew_user
+ public | program_id_and_title                                       | table    | postgres
+ public | table_with_column_that_tracks_modification_date            | table    | postgres
+ public | table_with_column_that_tracks_modification_date_id_seq     | sequence | postgres
+ public | table_with_default_values_for_fields                       | table    | postgres
+(10 rows)
+
+postgres=# CREATE TABLE presentations_decoded_date(
+postgres(#   id INT PRIMARY KEY, 
+postgres(#   date_encoded VARCHAR,
+postgres(#   day VARCHAR,
+postgres(#   morning_or_night VARCHAR,
+postgres(#   presentation_date DATE,
+postgres(#   title TEXT);
+CREATE TABLE
+postgres=# \! ls / | grep csv
+my_csv_with_names.csv
+program_number_and_title_pipe_separated.csv
+program_number_and_title_pipe_separated_with_columns_for_day_and_date.csv
+postgres=# \copy presentations_decoded_date FROM 'program_number_and_title_pipe_separated_with_columns_for_day_and_date.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+ERROR:  invalid input syntax for type date: "2017The-04-02"
+CONTEXT:  COPY presentations_decoded_date, line 2323, column presentation_date: "2017The-04-02"
+postgres=# SELECT * FROM presentations_decoded_date 
+postgres-# ;
+ id | date_encoded | day | morning_or_night | presentation_date | title 
+----+--------------+-----+------------------+-------------------+-------
+(0 rows)
+
+postgres=# \copy presentations_decoded_date FROM 'program_number_and_title_pipe_separated_with_columns_for_day_and_date.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+COPY 2965
+postgres=# SELECT * FROM presentations_decoded_date LIMIT 10;
+  id  | date_encoded |    day    | morning_or_night | presentation_date |                                                         
+                     title                                                                              
+------+--------------+-----------+------------------+-------------------+---------------------------------------------------------
+--------------------------------------------------------------------------------------------------------
+ 1350 | SN090901     | Sunday    | night            | 2001-09-09        | SOLOMON'S TEMPLE A SHADOW (PATTERN) OF THE NEW TESTAMENT
+ TEMPLE, THE CHURCH (WHICH TEMPLE WE ARE)
+ 1351 | WN091201     | Wednesday | night            | 2001-09-12        | PREDESTINATION: GOD ORDERED THE DESTRUCTION OF THE WORLD
+ TRADE CENTER BY EVIL MEN - HE DOES ALL THINGS - JESUS HOLDS THE KEYS OF DEATH
+ 1352 | SM091601     | Sunday    | morning          | 2001-09-16        | WHY ARAB TERRORISTS CRASHED JET AIRLINERS INTO THE TWIN 
+TOWERS OF THE WORLD TRADE CENTER- THE ANSWER BEGINS IN GENESIS 12:1
+ 1353 | SN091601     | Sunday    | night            | 2001-09-16        | SHADOWS IN THE OLD TESTAMENT -SOLOMON'S TEMPLE, THE BEAM
+S WERE FITLY FRAMED WITHOUT NAILS, THE CHURCH WAS FITLY JOINED BY THE WORD.
+ 1354 | WN091901     | Wednesday | night            | 2001-09-19        | PREDESTINATION: GOD'S WILL CAUSED THE DEATH OF THE PEOPL
+E IN THE WORLD TRADE CENTER - HE CREATES EVIL AND KILLS INNOCENT PEOPLE
+ 1355 | SM092301     | Sunday    | morning          | 2001-09-23        | ARAB TERRORISTS HAVE DECLARED A HOLY WAR (JIHAD) AGAINST
+ AMERICA - JERUSALEM'S HISTORY FOR THE LAST 2000 YEARS - THEY SHALL FALL BY THE SWORD "UNTIL" --
+ 1356 | SN092301     | Sunday    | night            | 2001-09-23        | SOLOMON'S TEMPLE - THE SHADOWS AND VERY IMAGES OF THE CA
+NDLESTICKS, THE ARK OF THE COVENANT, THE SEA, AND THE ALTAR
+ 1357 | WN092601     | Wednesday | night            | 2001-09-26        | PREDESTINATION: GOD CALLED NEBUCHADNEZZAR AGAINST ISRAEL
+ TO DESTROY THEM. GOD DOES ALL EVIL.
+ 1358 | SM093001     | Sunday    | morning          | 2001-09-30        | THE ARABS ARE TERRORIZING AMERICA BECAUSE ISRAEL CELEBRA
+TED CHRISTMASS (FIRE WORSHIP) 900 B.C. -- THEY NEVER KEPT THEIR SABBATICAL YEARS OR ROTATED THEIR CROPS
+ 1359 | SN093001     | Sunday    | night            | 2001-09-30        | THE KINGS AND PROPHETS OF ISRAEL - THE SHADOWS OF SOLOMO
+N'S TEMPLE - HOW TO APPLY A COMMENTARY
+(10 rows)
+
+postgres=# 
