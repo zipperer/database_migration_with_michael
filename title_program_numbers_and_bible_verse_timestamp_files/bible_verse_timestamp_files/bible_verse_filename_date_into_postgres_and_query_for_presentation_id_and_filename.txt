@@ -1,0 +1,148 @@
+[andrew@ayer bible_verse_timestamp_files (main *+% u=)]$ docker cp bible_display_app_file_to_date.csv az_postgres_ubuntu1:/
+[andrew@ayer bible_verse_timestamp_files (main *+% u=)]$ docker exec -it az_postgres_ubuntu1 /bin/bash
+root@bafb1425fb80:/# psql --username postgres
+psql (14.9 (Ubuntu 14.9-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# \d
+                                      List of relations
+ Schema |                            Name                            |   Type   |    Owner    
+--------+------------------------------------------------------------+----------+-------------
+ public | edit_history                                               | table    | postgres
+ public | edit_history_id_seq                                        | sequence | postgres
+ public | example_table_with_column_that_tracks_modifications        | table    | andrew_user
+ public | example_table_with_column_that_tracks_modifications_id_seq | sequence | andrew_user
+ public | my_new_table                                               | table    | andrew_user
+ public | my_new_table_id_seq                                        | sequence | andrew_user
+ public | presentations_decoded_date                                 | table    | postgres
+ public | program_id_and_title                                       | table    | postgres
+ public | table_with_column_that_tracks_modification_date            | table    | postgres
+ public | table_with_column_that_tracks_modification_date_id_seq     | sequence | postgres
+ public | table_with_default_values_for_fields                       | table    | postgres
+(11 rows)
+
+postgres=# CREATE TABLE bible_display_app_filenames (
+postgres(#   id SERIAL PRIMARY KEY,
+postgres(#   filename VARCHAR,
+postgres(#   file_date DATE);
+CREATE TABLE
+postgres=# \copy bible_display_app_filenames (filename, file_date) FROM 'bible_display_app_file_to_date.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER)
+COPY 1121
+postgres=# SELECT * FROM bible_display_app_filenames LIMIT 10;
+ id |      filename      | file_date  
+----+--------------------+------------
+  1 | BDA 2018 8 19.txt  | 2018-08-19
+  2 | BDA 2020 7 04.txt  | 2020-07-04
+  3 | BDA 2018 6 20.txt  | 2018-06-20
+  4 | BDA 2021 7 10.txt  | 2021-07-10
+  5 | BDA 2019 10 16.txt | 2019-10-16
+  6 | BDA 2019 10 02.txt | 2019-10-02
+  7 | BDA 2019 8 25.txt  | 2019-08-25
+  8 | BDA 2014 10 15.txt | 2014-10-15
+  9 | BDA 2015 7 12.txt  | 2015-07-12
+ 10 | BDA 2014 10 01.txt | 2014-10-01
+(10 rows)
+
+postgres=# SELECT * FROM presentations_decoded_date  LIMIT 1;
+  id  | date_encoded |  day   | morning_or_night | presentation_date |                                               title        
+                                       
+------+--------------+--------+------------------+-------------------+------------------------------------------------------------
+---------------------------------------
+ 1350 | SN090901     | Sunday | night            | 2001-09-09        | SOLOMON'S TEMPLE A SHADOW (PATTERN) OF THE NEW TESTAMENT TE
+MPLE, THE CHURCH (WHICH TEMPLE WE ARE)
+(1 row)
+
+postgres=# SELECT id, title FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentation_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  missing FROM-clause entry for table "presentation_decoded_date"
+LINE 1: ..._decoded_date JOIN bible_display_app_filenames ON presentati...
+                                                             ^
+postgres=# SELECT id, title FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  column reference "id" is ambiguous
+LINE 1: SELECT id, title FROM presentations_decoded_date JOIN bible_...
+               ^
+postgres=# SELECT presentations_decoded_data.id, bible_diplay_app_filenames.filename FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  missing FROM-clause entry for table "presentations_decoded_data"
+LINE 1: SELECT presentations_decoded_data.id, bible_diplay_app_filen...
+               ^
+postgres=# SELECT presentations_decoded_date.id, bible_diplay_app_filenames.filename FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  missing FROM-clause entry for table "bible_diplay_app_filenames"
+LINE 1: SELECT presentations_decoded_date.id, bible_diplay_app_filen...
+                                              ^
+postgres=# SELECT presentations_decoded_date.id, bible_diplay_app_filenames.filename FROM presentations_decoded_date, bible_display_app_filenames JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  table name "bible_display_app_filenames" specified more than once
+postgres=# SELECT presentations_decoded_date.id, bible_diplay_app_filenames.filename FROM presentations_decoded_date, bible_display_app_filenames JOIN ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  syntax error at or near "ON"
+LINE 1: ...ns_decoded_date, bible_display_app_filenames JOIN ON present...
+                                                             ^
+postgres=# SELECT presentations_decoded_date.id, bible_diplay_app_filenames.filename FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+ERROR:  missing FROM-clause entry for table "bible_diplay_app_filenames"
+LINE 1: SELECT presentations_decoded_date.id, bible_diplay_app_filen...
+                                              ^
+postgres=# SELECT presentations_decoded_date.id, filename FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+  id  |        filename         
+------+-------------------------
+ 3982 | BDA 2020 5 06.txt
+ 3187 | BDA 2013 12 22.txt
+ 3229 | BDA 2014 4 13.txt
+ 3230 | BDA 2014 4 13.txt
+ 3231 | BDA 2014 4 16.txt
+ 3232 | BDA 2014 4 20.txt
+ 3233 | BDA 2014 4 20.txt
+ 3169 | BDA 2013 11 06.txt
+ 3170 | BDA 2013 11 10.txt
+ 3170 | BDA 2013 11 10_3170.txt
+(10 rows)
+
+postgres=# SELECT presentations_decoded_date.id, filename, title FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 10;
+  id  |        filename         |                                                                                         title   
+                                                                                      
+------+-------------------------+-------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------
+ 3982 | BDA 2020 5 06.txt       | Predestination, Prayer And The Sabbath (Part 2)
+ 3187 | BDA 2013 12 22.txt      | Christmas: “Eat Flesh And Drink Blood” Is Not The “Roman Catholic Mass”
+ 3229 | BDA 2014 4 13.txt       | Predestination: Anger Should Be An Alien Characteristic To The Believer
+ 3230 | BDA 2014 4 13.txt       | Doctrine Of The Devil: Man's Opinion That Appeals To The Flesh- Parable Of The Sower
+ 3231 | BDA 2014 4 16.txt       | History: The Altar And Its Horns- Sanctuary- Solomon, Joab And Adonijah
+ 3232 | BDA 2014 4 20.txt       | The True Story Of Easter And The Resurrection
+ 3233 | BDA 2014 4 20.txt       | Doctrine Of The Devil: Good Words And Fair Speeches Deceives- Flattery
+ 3169 | BDA 2013 11 06.txt      | History: Ark Of The Covenant – Borne By Staves, Taken By Philistines, Returned On A New Cart- Uzz
+ah's Breach- He Dies
+ 3170 | BDA 2013 11 10.txt      | Predestination: Spiritual Schizophrenia- Perfect (Teleios) Is Eliminating The Outer Man (In Time
+) Through Tribulation, Fire And Trials- The Mature Man Offends Not In Word- Big Words
+ 3170 | BDA 2013 11 10_3170.txt | Predestination: Spiritual Schizophrenia- Perfect (Teleios) Is Eliminating The Outer Man (In Time
+) Through Tribulation, Fire And Trials- The Mature Man Offends Not In Word- Big Words
+(10 rows)
+
+postgres=# SELECT presentations_decoded_date.id, filename, title FROM presentations_decoded_date JOIN bible_display_app_filenames ON presentations_decoded_date.presentation_date = bible_display_app_filenames.file_date LIMIT 15;
+  id  |          filename          |                                                                                              
+                                title                                                                                             
+                                 
+------+----------------------------+----------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+---------------------------------
+ 3982 | BDA 2020 5 06.txt          | Predestination, Prayer And The Sabbath (Part 2)
+ 3187 | BDA 2013 12 22.txt         | Christmas: “Eat Flesh And Drink Blood” Is Not The “Roman Catholic Mass”
+ 3229 | BDA 2014 4 13.txt          | Predestination: Anger Should Be An Alien Characteristic To The Believer
+ 3230 | BDA 2014 4 13.txt          | Doctrine Of The Devil: Man's Opinion That Appeals To The Flesh- Parable Of The Sower
+ 3231 | BDA 2014 4 16.txt          | History: The Altar And Its Horns- Sanctuary- Solomon, Joab And Adonijah
+ 3232 | BDA 2014 4 20.txt          | The True Story Of Easter And The Resurrection
+ 3233 | BDA 2014 4 20.txt          | Doctrine Of The Devil: Good Words And Fair Speeches Deceives- Flattery
+ 3169 | BDA 2013 11 06.txt         | History: Ark Of The Covenant – Borne By Staves, Taken By Philistines, Returned On A New Cart- 
+Uzzah's Breach- He Dies
+ 3170 | BDA 2013 11 10.txt         | Predestination: Spiritual Schizophrenia- Perfect (Teleios) Is Eliminating The Outer Man (In T
+ime) Through Tribulation, Fire And Trials- The Mature Man Offends Not In Word- Big Words
+ 3170 | BDA 2013 11 10_3170.txt    | Predestination: Spiritual Schizophrenia- Perfect (Teleios) Is Eliminating The Outer Man (In T
+ime) Through Tribulation, Fire And Trials- The Mature Man Offends Not In Word- Big Words
+ 3171 | BDA 2013 11 10.txt         | Why We Do Not Believe In Demons- Solomon And The Demons, Solomon And The Genies- Tyre, Babylo
+n, Pergamos And America- Eternal Flame- Christmas
+ 3171 | BDA 2013 11 10_3170.txt    | Why We Do Not Believe In Demons- Solomon And The Demons, Solomon And The Genies- Tyre, Babylo
+n, Pergamos And America- Eternal Flame- Christmas
+ 3172 | BDA 2013 11 17_3172n73.txt | Predestination: How To Study Greek Words- “Perfect”- Necessary Tools For Learning
+ 3173 | BDA 2013 11 17_3172n73.txt | Doctrine Of Devils: Fairies And Other Related “gods”- Sons Of God Are Believers- Daughters Of M
+en (Gentiles) Are Unbelievers- Truth Marries A Lie Is The Reason For The Flood- “As The Days Of Noah” Will Be At The End Of Time- “Gi
+ve In Marriage”
+ 3174 | BDA 2013 11 20_3174.txt    | History: Exodus 25- Shadows And Image- The Tabernacle, The Temple, Melchizedek- The Holy Of H
+olies, House Of God- The Ark (Our Hearts)- Veil, Flesh, Bread, Body, Church (Hebrews 8-10)
+(15 rows)
+
+postgres=# 
