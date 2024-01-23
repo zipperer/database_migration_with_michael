@@ -17,6 +17,7 @@ def decode_day(day_code : str) -> str:
     'Sunday'
     >>> decode_day('W')
     'Wednesday'
+
     For other inputs, announce it for now then handle it later.
     '''
     if day_code in decode_day_dictionary:
@@ -36,6 +37,7 @@ def decode_morning_or_night(morning_or_night_code : str) -> str:
     'morning'
     >>> decode_morning_or_night('N')
     'night'
+
     For other inputs, announce it for now then handle it later.
     '''
     if morning_or_night_code in decode_morning_or_night_dictionary:
@@ -66,7 +68,7 @@ def parse_program_date_code(date_code : str) -> Tuple[str, str, str]:
     >>> parse_program_date_code('SN090901')
     ('Sunday', 'night', '2001-09-09')
     >>> parse_program_date_code('SM091601')
-    ('Sunday, 'morning', '2001-09-16')
+    ('Sunday', 'morning', '2001-09-16')
     >>> parse_program_date_code('WN091901')
     ('Wednesday', 'night', '2001-09-19')
     '''
@@ -78,24 +80,27 @@ def parse_program_date_code(date_code : str) -> Tuple[str, str, str]:
     date_decoded = decode_date(date_encoded)
     return (day_decoded, morning_or_night_decoded, date_decoded)
 
-
-with open(filename_file_to_write, 'w', newline='') as output_csv:
-    csv_writer = csv.DictWriter(output_csv, dict_writer_fieldnames, delimiter='|')
-    csv_writer.writeheader()
-    with open(filename_file_to_read, newline='') as input_csv:
-        csv_reader = csv.DictReader(input_csv, delimiter='|')
-        # next(csv_reader) # skip header?
-        for row_as_dictionary in csv_reader:
-            id = row_as_dictionary['program_id']
-            date_code = row_as_dictionary['program_code']
-            title = row_as_dictionary['program_title']
-            day, morning_or_night, date = parse_program_date_code(date_code)
-            dictionary_to_write = {
-                'program_id' : id,
-                'program_code' : date_code,
-                'program_day' : day,
-                'program_morning_or_night' : morning_or_night,
-                'program_date' : date,
-                'program_title' : title
+def main():
+    with open(filename_file_to_write, 'w', newline='') as output_csv:
+        csv_writer = csv.DictWriter(output_csv, dict_writer_fieldnames, delimiter='|')
+        csv_writer.writeheader()
+        with open(filename_file_to_read, newline='') as input_csv:
+            csv_reader = csv.DictReader(input_csv, delimiter='|')
+            # next(csv_reader) # skip header?
+            for row_as_dictionary in csv_reader:
+                id = row_as_dictionary['program_id']
+                date_code = row_as_dictionary['program_code']
+                title = row_as_dictionary['program_title']
+                day, morning_or_night, date = parse_program_date_code(date_code)
+                dictionary_to_write = {
+                    'program_id' : id,
+                    'program_code' : date_code,
+                    'program_day' : day,
+                    'program_morning_or_night' : morning_or_night,
+                    'program_date' : date,
+                    'program_title' : title
                 }
-            csv_writer.writerow(dictionary_to_write)
+                csv_writer.writerow(dictionary_to_write)
+
+if __name__ == '__main__':
+    main()
