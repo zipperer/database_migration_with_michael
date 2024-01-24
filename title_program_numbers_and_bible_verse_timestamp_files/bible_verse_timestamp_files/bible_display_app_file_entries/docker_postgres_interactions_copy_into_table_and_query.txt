@@ -1,0 +1,456 @@
+postgres=# CREATE TABLE bible_display_app_file_entries (
+  filename VARCHAR,
+  filename_date DATE,
+  entry_timestamp TIMESTAMP,
+  book VARCHAR,
+  chapter INT,
+  verse INT
+);
+CREATE TABLE
+postgres=# --\copy bible_display_app_file_entries
+postgres=# SELECT * FROM bible_display_app_file_entries;
+ filename | filename_date | entry_timestamp | book | chapter | verse 
+----------+---------------+-----------------+------+---------+-------
+(0 rows)
+
+postgres=# --\copy bible_display_app_file_entries FROM ''
+postgres=# \! pwd
+/
+postgres=# \! ls | grep csv
+BDA 2014 1 01.csv
+bible_display_app_file_to_date.csv
+my_csv_with_names.csv
+program_number_and_title_pipe_separated.csv
+program_number_and_title_pipe_separated_with_columns_for_day_and_date.csv
+postgres=# \copy bible_display_app_file_entries FROM 'BDA 2014 1 01.csv' WITH (FORMAT CSV, DELIMITER '|', HEADER);
+COPY 516
+postgres=# SELECT * FROM bible_display_app_file_entries;
+     filename      | filename_date |   entry_timestamp   |      book      | chapter | verse 
+-------------------+---------------+---------------------+----------------+---------+-------
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:00:25 | Romans         |       8 |    29
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:01:00 | Romans         |       8 |    28
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:01:14 | Romans         |       8 |    29
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:01:53 | Romans         |       8 |    29
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:01:54 | Romans         |       8 |    29
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:01:54 | Romans         |       8 |    29
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:42 | Romans         |       7 |    20
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:43 | Romans         |       7 |    21
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:44 | Romans         |       7 |    22
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:45 | Romans         |       7 |    23
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:45 | Romans         |       7 |    24
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:46 | Romans         |       7 |    25
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:05:47 | Romans         |       7 |    24
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:06:09 | Romans         |       7 |    25
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:07:16 | Romans         |       7 |    24
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:07:17 | Romans         |       7 |    23
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:07:18 | Romans         |       7 |    22
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:07:19 | Romans         |       7 |    21
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:07:19 | Romans         |       7 |    20
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:09:56 | 1Corinthians   |       3 |     1
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:13 | 1Corinthians   |       2 |    15
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:28 | 1Corinthians   |       2 |    14
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:29 | 1Corinthians   |       2 |    13
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:29 | 1Corinthians   |       2 |    12
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:29 | 1Corinthians   |       2 |    11
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:30 | 1Corinthians   |       2 |    10
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:30 | 1Corinthians   |       2 |     9
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:30 | 1Corinthians   |       2 |     8
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:31 | 1Corinthians   |       2 |     7
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:10:42 | 1Corinthians   |       2 |     8
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:11:06 | 1Corinthians   |       2 |     8
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:11:17 | 1Corinthians   |       2 |     9
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:11:29 | 1Corinthians   |       2 |    10
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:11:39 | 1Corinthians   |       2 |    10
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:11:40 | 1Corinthians   |       2 |     9
+ BDA 2014 1 01.txt | 2014-01-01    | 2014-01-01 00:11:43 | 1Corinthians   |       2 |     9
+postgres=# \d     
+                                      List of relations
+ Schema |                            Name                            |   Type   |    Owner    
+--------+------------------------------------------------------------+----------+-------------
+ public | bible_display_app_file_entries                             | table    | postgres
+ public | bible_display_app_filenames                                | table    | postgres
+ public | bible_display_app_filenames_id_seq                         | sequence | postgres
+ public | edit_history                                               | table    | postgres
+ public | edit_history_id_seq                                        | sequence | postgres
+ public | example_table_with_column_that_tracks_modifications        | table    | andrew_user
+ public | example_table_with_column_that_tracks_modifications_id_seq | sequence | andrew_user
+ public | my_new_table                                               | table    | andrew_user
+ public | my_new_table_id_seq                                        | sequence | andrew_user
+ public | my_timestamp_table                                         | table    | postgres
+ public | my_timestamp_table_id_seq                                  | sequence | postgres
+ public | presentations_decoded_date                                 | table    | postgres
+ public | program_id_and_title                                       | table    | postgres
+ public | table_with_column_that_tracks_modification_date            | table    | postgres
+ public | table_with_column_that_tracks_modification_date_id_seq     | sequence | postgres
+ public | table_with_default_values_for_fields                       | table    | postgres
+(16 rows)
+
+postgres=# \d presentations_decoded_date
+               Table "public.presentations_decoded_date"
+      Column       |       Type        | Collation | Nullable | Default 
+-------------------+-------------------+-----------+----------+---------
+ id                | integer           |           | not null | 
+ date_encoded      | character varying |           |          | 
+ day               | character varying |           |          | 
+ morning_or_night  | character varying |           |          | 
+ presentation_date | date              |           |          | 
+ title             | text              |           |          | 
+Indexes:
+    "presentations_decoded_date_pkey" PRIMARY KEY, btree (id)
+
+postgres=# SELECT presentations_decoded_date.id, presentations_decoded_date.title, bible_display_app_file_entries.book, bible_display_app_file_entries.chapter, bible_display_app_file_entries.verse FROM presentations_decoded_date JOIN bible_display_app_file_entries ON bible_display_app_file_entries.filename_date = presentations_decoded_date.presentation_date;
+  id  |                                                                                      title                                
+                                                      |      book      | chapter | verse 
+------+---------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------+----------------+---------+-------
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       8 |    29
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       8 |    28
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       8 |    29
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       8 |    29
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       8 |    29
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       8 |    29
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    20
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    21
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    22
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    23
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    24
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    25
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    24
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    25
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    24
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    23
+ 3191 | History: Seven Candlesticks- Two Olive Trees- Two Witnesses- Priests And Kings- Eyes Of The Lord- Star Of David- Menorah- 
+Rainbow (Iris)- Whirlwind- Chariots- Wheel In A Wheel | Romans         |       7 |    22
+postgres=# SELECT presentations_decoded_date.id, bible_display_app_file_entries.book, bible_display_app_file_entries.chapter, bible_display_app_file_entries.verse FROM presentations_decoded_date JOIN bible_display_app_file_entries ON bible_display_app_file_entries.filename_date = presentations_decoded_date.presentation_date;
+  id  |      book      | chapter | verse 
+------+----------------+---------+-------
+ 3191 | Romans         |       8 |    29
+ 3191 | Romans         |       8 |    28
+ 3191 | Romans         |       8 |    29
+ 3191 | Romans         |       8 |    29
+ 3191 | Romans         |       8 |    29
+ 3191 | Romans         |       8 |    29
+ 3191 | Romans         |       7 |    20
+ 3191 | Romans         |       7 |    21
+ 3191 | Romans         |       7 |    22
+ 3191 | Romans         |       7 |    23
+ 3191 | Romans         |       7 |    24
+ 3191 | Romans         |       7 |    25
+ 3191 | Romans         |       7 |    24
+ 3191 | Romans         |       7 |    25
+ 3191 | Romans         |       7 |    24
+ 3191 | Romans         |       7 |    23
+ 3191 | Romans         |       7 |    22
+ 3191 | Romans         |       7 |    21
+ 3191 | Romans         |       7 |    20
+ 3191 | 1Corinthians   |       3 |     1
+ 3191 | 1Corinthians   |       2 |    15
+ 3191 | 1Corinthians   |       2 |    14
+ 3191 | 1Corinthians   |       2 |    13
+ 3191 | 1Corinthians   |       2 |    12
+ 3191 | 1Corinthians   |       2 |    11
+ 3191 | 1Corinthians   |       2 |    10
+ 3191 | 1Corinthians   |       2 |     9
+ 3191 | 1Corinthians   |       2 |     8
+ 3191 | 1Corinthians   |       2 |     7
+ 3191 | 1Corinthians   |       2 |     8
+ 3191 | 1Corinthians   |       2 |     8
+ 3191 | 1Corinthians   |       2 |     9
+ 3191 | 1Corinthians   |       2 |    10
+ 3191 | 1Corinthians   |       2 |    10
+ 3191 | 1Corinthians   |       2 |     9
+ 3191 | 1Corinthians   |       2 |     9
+ 3191 | 1Corinthians   |       2 |     9
+ 3191 | 1Corinthians   |       2 |    10
+ 3191 | 1Corinthians   |       2 |    10
+ 3191 | 1Corinthians   |       2 |    11
+ 3191 | 1Corinthians   |       2 |    11
+ 3191 | 1Corinthians   |       2 |    10
+ 3191 | 1Corinthians   |       2 |    11
+ 3191 | 1Corinthians   |       2 |    12
+ 3191 | 1Corinthians   |       2 |    12
+ 3191 | 1Corinthians   |       2 |    12
+ 3191 | 1Corinthians   |       2 |    13
+ 3191 | 1Corinthians   |       2 |    13
+ 3191 | 1Corinthians   |       2 |    14
+ 3191 | 1Corinthians   |       2 |    13
+ 3191 | 1Corinthians   |       2 |    13
+ 3191 | 1Corinthians   |       2 |    14
+ 3191 | 1Corinthians   |       2 |    13
+ 3191 | 1Corinthians   |       2 |    14
+ 3191 | 1Corinthians   |       2 |    14
+ 3191 | 2Corinthians   |       4 |    11
+ 3191 | 2Corinthians   |       4 |    12
+ 3191 | 2Corinthians   |       4 |    12
+ 3191 | 2Corinthians   |       4 |    13
+ 3191 | 2Corinthians   |       4 |    14
+ 3191 | 2Corinthians   |       4 |    15
+ 3191 | 2Corinthians   |       4 |    16
+ 3191 | 2Corinthians   |       4 |    15
+ 3191 | 2Corinthians   |       4 |    14
+ 3191 | 2Corinthians   |       4 |    13
+ 3191 | 2Corinthians   |       4 |    12
+ 3191 | 2Corinthians   |       4 |    13
+ 3191 | 2Corinthians   |       4 |    14
+ 3191 | 2Corinthians   |       4 |    15
+ 3191 | 2Corinthians   |       4 |    16
+ 3191 | 2Corinthians   |       4 |    16
+ 3191 | 2Corinthians   |       4 |    17
+ 3191 | 2Corinthians   |       4 |    18
+ 3191 | 2Corinthians   |       5 |     1
+ 3191 | 2Corinthians   |       5 |     1
+ 3191 | 1Corinthians   |       2 |    14
+ 3191 | 1Corinthians   |       2 |    15
+ 3191 | 1Corinthians   |       2 |    15
+ 3191 | 1Corinthians   |       2 |    15
+ 3191 | 1Corinthians   |       2 |    16
+ 3191 | 1Corinthians   |       3 |     1
+ 3191 | 1Corinthians   |       3 |     2
+ 3191 | 1Corinthians   |       3 |     2
+ 3191 | 1Corinthians   |       3 |     1
+ 3191 | 1Corinthians   |       3 |     2
+ 3191 | 1Corinthians   |       3 |     3
+ 3191 | 1Corinthians   |       3 |     3
+ 3191 | 1Corinthians   |       3 |     3
+ 3191 | 1Corinthians   |       3 |     4
+ 3191 | 1Corinthians   |       3 |     3
+ 3191 | 1Corinthians   |       3 |     4
+ 3191 | 1Corinthians   |       3 |     3
+ 3191 | Ezra           |       9 |    13
+ 3191 | Ezra           |       9 |    14
+ 3191 | Ezra           |       9 |    13
+ 3191 | 1Corinthians   |       3 |     3
+ 3191 | 1Corinthians   |       3 |     4
+ 3191 | 1Corinthians   |       3 |     3
+postgres=# SELECT presentations_decoded_date.id, bible_display_app_file_entries.entry_timestamp, bible_display_app_file_entries.book, bible_display_app_file_entries.chapter, bible_display_app_file_entries.verse FROM presentations_decoded_date JOIN bible_display_app_file_entries ON bible_display_app_file_entries.filename_date = presentations_decoded_date.presentation_date;
+  id  |   entry_timestamp   |      book      | chapter | verse 
+------+---------------------+----------------+---------+-------
+ 3191 | 2014-01-01 00:00:25 | Romans         |       8 |    29
+ 3191 | 2014-01-01 00:01:00 | Romans         |       8 |    28
+ 3191 | 2014-01-01 00:01:14 | Romans         |       8 |    29
+ 3191 | 2014-01-01 00:01:53 | Romans         |       8 |    29
+ 3191 | 2014-01-01 00:01:54 | Romans         |       8 |    29
+ 3191 | 2014-01-01 00:01:54 | Romans         |       8 |    29
+ 3191 | 2014-01-01 00:05:42 | Romans         |       7 |    20
+ 3191 | 2014-01-01 00:05:43 | Romans         |       7 |    21
+ 3191 | 2014-01-01 00:05:44 | Romans         |       7 |    22
+ 3191 | 2014-01-01 00:05:45 | Romans         |       7 |    23
+ 3191 | 2014-01-01 00:05:45 | Romans         |       7 |    24
+ 3191 | 2014-01-01 00:05:46 | Romans         |       7 |    25
+ 3191 | 2014-01-01 00:05:47 | Romans         |       7 |    24
+ 3191 | 2014-01-01 00:06:09 | Romans         |       7 |    25
+ 3191 | 2014-01-01 00:07:16 | Romans         |       7 |    24
+ 3191 | 2014-01-01 00:07:17 | Romans         |       7 |    23
+ 3191 | 2014-01-01 00:07:18 | Romans         |       7 |    22
+ 3191 | 2014-01-01 00:07:19 | Romans         |       7 |    21
+ 3191 | 2014-01-01 00:07:19 | Romans         |       7 |    20
+ 3191 | 2014-01-01 00:09:56 | 1Corinthians   |       3 |     1
+ 3191 | 2014-01-01 00:10:13 | 1Corinthians   |       2 |    15
+ 3191 | 2014-01-01 00:10:28 | 1Corinthians   |       2 |    14
+ 3191 | 2014-01-01 00:10:29 | 1Corinthians   |       2 |    13
+ 3191 | 2014-01-01 00:10:29 | 1Corinthians   |       2 |    12
+ 3191 | 2014-01-01 00:10:29 | 1Corinthians   |       2 |    11
+ 3191 | 2014-01-01 00:10:30 | 1Corinthians   |       2 |    10
+ 3191 | 2014-01-01 00:10:30 | 1Corinthians   |       2 |     9
+ 3191 | 2014-01-01 00:10:30 | 1Corinthians   |       2 |     8
+ 3191 | 2014-01-01 00:10:31 | 1Corinthians   |       2 |     7
+ 3191 | 2014-01-01 00:10:42 | 1Corinthians   |       2 |     8
+ 3191 | 2014-01-01 00:11:06 | 1Corinthians   |       2 |     8
+ 3191 | 2014-01-01 00:11:17 | 1Corinthians   |       2 |     9
+ 3191 | 2014-01-01 00:11:29 | 1Corinthians   |       2 |    10
+ 3191 | 2014-01-01 00:11:39 | 1Corinthians   |       2 |    10
+ 3191 | 2014-01-01 00:11:40 | 1Corinthians   |       2 |     9
+ 3191 | 2014-01-01 00:11:43 | 1Corinthians   |       2 |     9
+ 3191 | 2014-01-01 00:11:53 | 1Corinthians   |       2 |     9
+ 3191 | 2014-01-01 00:11:54 | 1Corinthians   |       2 |    10
+ 3191 | 2014-01-01 00:11:55 | 1Corinthians   |       2 |    10
+ 3191 | 2014-01-01 00:12:13 | 1Corinthians   |       2 |    11
+ 3191 | 2014-01-01 00:12:19 | 1Corinthians   |       2 |    11
+ 3191 | 2014-01-01 00:12:22 | 1Corinthians   |       2 |    10
+ 3191 | 2014-01-01 00:12:39 | 1Corinthians   |       2 |    11
+ 3191 | 2014-01-01 00:13:29 | 1Corinthians   |       2 |    12
+ 3191 | 2014-01-01 00:13:40 | 1Corinthians   |       2 |    12
+ 3191 | 2014-01-01 00:13:40 | 1Corinthians   |       2 |    12
+ 3191 | 2014-01-01 00:13:45 | 1Corinthians   |       2 |    13
+ 3191 | 2014-01-01 00:13:56 | 1Corinthians   |       2 |    13
+ 3191 | 2014-01-01 00:13:58 | 1Corinthians   |       2 |    14
+ 3191 | 2014-01-01 00:13:59 | 1Corinthians   |       2 |    13
+ 3191 | 2014-01-01 00:14:04 | 1Corinthians   |       2 |    13
+ 3191 | 2014-01-01 00:14:07 | 1Corinthians   |       2 |    14
+ 3191 | 2014-01-01 00:14:13 | 1Corinthians   |       2 |    13
+ 3191 | 2014-01-01 00:14:22 | 1Corinthians   |       2 |    14
+ 3191 | 2014-01-01 00:14:26 | 1Corinthians   |       2 |    14
+ 3191 | 2014-01-01 00:16:44 | 2Corinthians   |       4 |    11
+ 3191 | 2014-01-01 00:17:03 | 2Corinthians   |       4 |    12
+ 3191 | 2014-01-01 00:19:27 | 2Corinthians   |       4 |    12
+ 3191 | 2014-01-01 00:19:41 | 2Corinthians   |       4 |    13
+ 3191 | 2014-01-01 00:19:47 | 2Corinthians   |       4 |    14
+ 3191 | 2014-01-01 00:20:35 | 2Corinthians   |       4 |    15
+ 3191 | 2014-01-01 00:20:45 | 2Corinthians   |       4 |    16
+ 3191 | 2014-01-01 00:21:00 | 2Corinthians   |       4 |    15
+ 3191 | 2014-01-01 00:21:00 | 2Corinthians   |       4 |    14
+ 3191 | 2014-01-01 00:21:00 | 2Corinthians   |       4 |    13
+ 3191 | 2014-01-01 00:21:00 | 2Corinthians   |       4 |    12
+ 3191 | 2014-01-01 00:21:06 | 2Corinthians   |       4 |    13
+ 3191 | 2014-01-01 00:21:06 | 2Corinthians   |       4 |    14
+ 3191 | 2014-01-01 00:21:06 | 2Corinthians   |       4 |    15
+ 3191 | 2014-01-01 00:21:06 | 2Corinthians   |       4 |    16
+ 3191 | 2014-01-01 00:21:09 | 2Corinthians   |       4 |    16
+ 3191 | 2014-01-01 00:21:33 | 2Corinthians   |       4 |    17
+ 3191 | 2014-01-01 00:22:27 | 2Corinthians   |       4 |    18
+ 3191 | 2014-01-01 00:22:35 | 2Corinthians   |       5 |     1
+ 3191 | 2014-01-01 00:22:52 | 2Corinthians   |       5 |     1
+ 3191 | 2014-01-01 00:22:57 | 1Corinthians   |       2 |    14
+ 3191 | 2014-01-01 00:22:58 | 1Corinthians   |       2 |    15
+ 3191 | 2014-01-01 00:22:59 | 1Corinthians   |       2 |    15
+ 3191 | 2014-01-01 00:23:01 | 1Corinthians   |       2 |    15
+ 3191 | 2014-01-01 00:23:18 | 1Corinthians   |       2 |    16
+ 3191 | 2014-01-01 00:24:21 | 1Corinthians   |       3 |     1
+ 3191 | 2014-01-01 00:26:02 | 1Corinthians   |       3 |     2
+ 3191 | 2014-01-01 00:27:24 | 1Corinthians   |       3 |     2
+ 3191 | 2014-01-01 00:27:29 | 1Corinthians   |       3 |     1
+ 3191 | 2014-01-01 00:27:30 | 1Corinthians   |       3 |     2
+ 3191 | 2014-01-01 00:27:31 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:27:33 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:29:43 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:29:45 | 1Corinthians   |       3 |     4
+ 3191 | 2014-01-01 00:29:47 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:34:20 | 1Corinthians   |       3 |     4
+ 3191 | 2014-01-01 00:34:22 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:40:18 | Ezra           |       9 |    13
+ 3191 | 2014-01-01 00:40:20 | Ezra           |       9 |    14
+ 3191 | 2014-01-01 00:40:22 | Ezra           |       9 |    13
+ 3191 | 2014-01-01 00:40:31 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:40:33 | 1Corinthians   |       3 |     4
+ 3191 | 2014-01-01 00:40:34 | 1Corinthians   |       3 |     3
+ 3191 | 2014-01-01 00:41:17 | Isaiah         |      46 |    10
+ 3191 | 2014-01-01 00:41:27 | Romans         |       8 |    29
+ 3191 | 2014-01-01 00:50:09 | Proverbs       |      16 |    27
+ 3191 | 2014-01-01 00:50:48 | Proverbs       |      16 |    27
+ 3191 | 2014-01-01 00:50:48 | Proverbs       |      16 |    28
+ 3191 | 2014-01-01 00:52:10 | Proverbs       |      16 |    27
+ 3191 | 2014-01-01 00:52:12 | Proverbs       |      16 |    28
+ 3191 | 2014-01-01 00:53:50 | Proverbs       |      16 |    28
+ 3191 | 2014-01-01 00:55:20 | Proverbs       |      16 |    28
+ 3191 | 2014-01-01 00:55:20 | Proverbs       |      16 |    29
+ 3191 | 2014-01-01 00:55:46 | Proverbs       |      16 |    30
+ 3191 | 2014-01-01 00:56:12 | Proverbs       |      17 |     1
+ 3191 | 2014-01-01 00:57:04 | Proverbs       |      17 |    14
+ 3191 | 2014-01-01 00:57:44 | Proverbs       |      17 |    14
+ 3191 | 2014-01-01 00:59:32 | Proverbs       |      17 |    15
+ 3191 | 2014-01-01 00:59:32 | Proverbs       |      17 |    16
+ 3191 | 2014-01-01 00:59:32 | Proverbs       |      17 |    17
+ 3191 | 2014-01-01 00:59:32 | Proverbs       |      17 |    18
+ 3191 | 2014-01-01 00:59:32 | Proverbs       |      17 |    19
+ 3191 | 2014-01-01 00:59:34 | Proverbs       |      17 |    19
+ 3191 | 2014-01-01 00:59:35 | Proverbs       |      17 |    18
+ 3191 | 2014-01-01 00:59:35 | Proverbs       |      17 |    17
+ 3191 | 2014-01-01 00:59:36 | Proverbs       |      17 |    16
+ 3191 | 2014-01-01 00:59:37 | Proverbs       |      17 |    15
+ 3191 | 2014-01-01 00:59:39 | Proverbs       |      17 |    15
+ 3191 | 2014-01-01 00:59:39 | Proverbs       |      17 |    15
+ 3191 | 2014-01-01 00:59:40 | Proverbs       |      17 |    16
+ 3191 | 2014-01-01 00:59:41 | Proverbs       |      17 |    17
+ 3191 | 2014-01-01 00:59:41 | Proverbs       |      17 |    17
+ 3191 | 2014-01-01 00:59:52 | Proverbs       |      17 |    18
+ 3191 | 2014-01-01 00:59:59 | Proverbs       |      17 |    19
+ 3191 | 2014-01-01 00:59:59 | Proverbs       |      17 |    19
+ 3191 | 2014-01-01 01:00:37 | Proverbs       |      17 |    20
+ 3191 | 2014-01-01 01:01:38 | Proverbs       |      20 |     3
+ 3191 | 2014-01-01 01:02:43 | Proverbs       |      22 |    10
+ 3191 | 2014-01-01 01:08:02 | Proverbs       |      22 |    11
+ 3191 | 2014-01-01 01:08:13 | Proverbs       |      22 |    12
+ 3191 | 2014-01-01 01:08:15 | Proverbs       |      22 |    11
+ 3191 | 2014-01-01 01:09:10 | Proverbs       |      26 |    13
+ 3191 | 2014-01-01 01:10:33 | Proverbs       |      26 |    14
+ 3191 | 2014-01-01 01:10:46 | Proverbs       |      26 |    14
+ 3191 | 2014-01-01 01:10:46 | Proverbs       |      26 |    15
+ 3191 | 2014-01-01 01:11:00 | Proverbs       |      26 |    16
+ 3191 | 2014-01-01 01:11:14 | Proverbs       |      26 |    17
+ 3191 | 2014-01-01 01:11:46 | Proverbs       |      26 |    18
+ 3191 | 2014-01-01 01:11:55 | Proverbs       |      26 |    19
+ 3191 | 2014-01-01 01:11:56 | Proverbs       |      26 |    18
+ 3191 | 2014-01-01 01:11:58 | Proverbs       |      26 |    19
+ 3191 | 2014-01-01 01:12:06 | Proverbs       |      26 |    20
+ 3191 | 2014-01-01 01:12:15 | Proverbs       |      26 |    20
+ 3191 | 2014-01-01 01:12:47 | Proverbs       |      26 |    21
+ 3191 | 2014-01-01 01:12:56 | Proverbs       |      26 |    22
+ 3191 | 2014-01-01 01:13:55 | Proverbs       |      26 |    23
+ 3191 | 2014-01-01 01:14:01 | Proverbs       |      26 |    24
+ 3191 | 2014-01-01 01:14:02 | Proverbs       |      26 |    23
+ 3191 | 2014-01-01 01:14:18 | Proverbs       |      26 |    24
+ 3191 | 2014-01-01 01:14:31 | Proverbs       |      26 |    24
+ 3191 | 2014-01-01 01:14:31 | Proverbs       |      26 |    25
+ 3191 | 2014-01-01 01:17:15 | Proverbs       |      28 |     1
+ 3191 | 2014-01-01 01:17:47 | Proverbs       |       1 |     1
+ 3191 | 2014-01-01 01:17:48 | Proverbs       |       1 |     2
+ 3191 | 2014-01-01 01:17:52 | Proverbs       |       1 |     4
+ 3191 | 2014-01-01 01:18:00 | Proverbs       |       1 |     5
+ 3191 | 2014-01-01 01:18:07 | Proverbs       |       1 |     6
+ 3191 | 2014-01-01 01:18:17 | Proverbs       |       1 |     7
+ 3191 | 2014-01-01 01:18:17 | Proverbs       |       1 |     7
+ 3191 | 2014-01-01 01:19:04 | Proverbs       |      28 |    25
+ 3191 | 2014-01-01 01:20:47 | Proverbs       |      28 |    26
+ 3191 | 2014-01-01 01:21:14 | Proverbs       |      28 |    27
+ 3191 | 2014-01-01 01:21:41 | Proverbs       |      28 |    28
+ 3191 | 2014-01-01 01:21:50 | Proverbs       |      29 |    22
+ 3191 | 2014-01-01 01:22:18 | Proverbs       |      29 |    22
+ 3191 | 2014-01-01 01:22:23 | Proverbs       |      29 |    22
+ 3191 | 2014-01-01 01:22:32 | Proverbs       |      29 |    22
+ 3191 | 2014-01-01 01:22:33 | Proverbs       |      29 |    23
+ 3191 | 2014-01-01 01:24:27 | Proverbs       |      29 |    24
+ 3191 | 2014-01-01 01:24:34 | Proverbs       |      29 |    25
+ 3191 | 2014-01-01 01:24:35 | Proverbs       |      29 |    24
+ 3191 | 2014-01-01 01:24:39 | Proverbs       |      29 |    25
+ 3191 | 2014-01-01 01:24:43 | Proverbs       |      29 |    24
+ 3191 | 2014-01-01 01:24:55 | Proverbs       |      30 |    32
+ 3191 | 2014-01-01 01:25:22 | Proverbs       |      30 |    33
+ 3191 | 2014-01-01 01:25:33 | Proverbs       |      30 |    33
+ 3191 | 2014-01-01 01:26:34 | Proverbs       |      31 |     1
+ 3191 | 2014-01-01 01:26:50 | Proverbs       |      31 |     1
+ 3191 | 2014-01-01 01:26:50 | Proverbs       |      30 |    33
+ 3191 | 2014-01-01 07:58:54 | Proverbs       |      30 |    33
+ 3191 | 2014-01-01 07:58:56 | Proverbs       |      30 |    33
+ 3191 | 2014-01-01 07:58:57 | Proverbs       |      30 |    33
+ 3191 | 2014-01-01 00:02:40 | John           |       9 |    31
+ 3191 | 2014-01-01 00:02:42 | Romans         |      10 |    14
+ 3191 | 2014-01-01 00:02:46 | Romans         |      10 |    13
+ 3191 | 2014-01-01 00:05:43 | Ephesians      |       5 |     1
+ 3191 | 2014-01-01 00:06:56 | Luke           |       3 |     3
+ 3191 | 2014-01-01 00:07:02 | Luke           |       3 |     4
+ 3191 | 2014-01-01 00:07:13 | Isaiah         |      40 |     3
+ 3191 | 2014-01-01 00:07:15 | Isaiah         |      40 |     4
+ 3191 | 2014-01-01 00:07:18 | Isaiah         |      40 |     3
+ 3191 | 2014-01-01 00:09:37 | Philippians    |       2 |    13
+ 3191 | 2014-01-01 00:18:15 | John           |       6 |    55
+ 3191 | 2014-01-01 00:18:19 | John           |       6 |    54
+ 3191 | 2014-01-01 00:18:21 | John           |       6 |    53
+ 3191 | 2014-01-01 00:18:23 | John           |       6 |    53
+ 3191 | 2014-01-01 00:18:38 | John           |       6 |    54
+ 3191 | 2014-01-01 00:18:40 | John           |       6 |    55
+ 3191 | 2014-01-01 00:19:18 | John           |       6 |    54
+ 3191 | 2014-01-01 00:19:19 | John           |       6 |    53
+ 3191 | 2014-01-01 00:19:21 | John           |       6 |    53
+ 3191 | 2014-01-01 00:19:38 | John           |       6 |    54
+ 3191 | 2014-01-01 00:19:39 | John           |       6 |    55
+ 3191 | 2014-01-01 00:20:35 | 3John          |       1 |     2
+ 3191 | 2014-01-01 00:22:16 | Ephesians      |       4 |     4
+ 3191 | 2014-01-01 00:22:17 | Ephesians      |       4 |     5
+ 3191 | 2014-01-01 00:28:30 | 1Thessalonians |       5 |    18
+postgres=# 
