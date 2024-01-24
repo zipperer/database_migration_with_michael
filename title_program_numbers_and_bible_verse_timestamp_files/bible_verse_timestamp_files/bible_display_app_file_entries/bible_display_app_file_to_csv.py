@@ -77,8 +77,8 @@ def write_entries_from_file_to_file(filename_file_to_read : str,
                     dictionary_to_write_for_line = line_from_file_to_dictionary_to_write_for_line(filename_file_to_read_no_path, line)
                     csv_writer.writerow(dictionary_to_write_for_line)
 
-def main():
-    filename_file_to_read_full_path = '/Users/andrew/grace_and_truth_ministries/migrate_database_with_michael/title_program_numbers_and_bible_verse_timestamp_files/bible_verse_timestamp_files/bible_verse_timestamp_files_unzipped/BDA 2014 1 01.txt'
+def main(filename_file_to_read_full_path : str):
+    #filename_file_to_read_full_path = '/Users/andrew/grace_and_truth_ministries/migrate_database_with_michael/title_program_numbers_and_bible_verse_timestamp_files/bible_verse_timestamp_files/bible_verse_timestamp_files_unzipped/BDA 2014 1 01.txt'
     #filename_file_to_read = 'BDA 2014 1 01.txt' i.e. os.path.basename(filename_file_to_read_full_path)
     #'BDA 2014 10 05.txt'
     #'BDA 2015 8 12.txt'
@@ -87,4 +87,9 @@ def main():
     write_entries_from_file_to_file(filename_file_to_read_full_path, filename_file_to_write)
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input_filename_file_to_read_full_path', help='file to convert from .txt to .csv -- full path')
+    commandline_arguments_namespace_object = parser.parse_args()
+    filename_file_to_read_full_path = commandline_arguments_namespace_object.input_filename_file_to_read_full_path
+    main(filename_file_to_read_full_path)

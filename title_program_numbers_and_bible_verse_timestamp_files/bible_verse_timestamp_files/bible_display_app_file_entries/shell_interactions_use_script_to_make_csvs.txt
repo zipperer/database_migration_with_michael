@@ -1,0 +1,6 @@
+[andrew@ayer bible_display_app_file_entries (main % u=)]$ python3 bible_display_app_file_to_csv.py -i "/Users/andrew/grace_and_tr
+uth_ministries/migrate_database_with_michael/title_program_numbers_and_bible_verse_timestamp_files/bible_verse_timestamp_files/bi
+ble_verse_timestamp_files_unzipped/BDA 2014 10 05.txt"                                                                             
+[andrew@ayer bible_display_app_file_entries (main *% u=)]$ python3 bible_display_app_file_to_csv.py -i "/Users/andrew/grace_and_t
+ruth_ministries/migrate_database_with_michael/title_program_numbers_and_bible_verse_timestamp_files/bible_verse_timestamp_files/b
+ible_verse_timestamp_files_unzipped/BDA 2015 8 12.txt"
