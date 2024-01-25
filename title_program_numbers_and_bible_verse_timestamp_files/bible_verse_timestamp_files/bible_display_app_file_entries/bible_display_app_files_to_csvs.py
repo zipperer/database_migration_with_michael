@@ -354,7 +354,7 @@ def read_files_from_directory_and_write_files_to_directory(directory_of_files_to
 
     The correspondence between the filenames will be:
     - input filename: 'BDA YYYY (M)M DD.txt' -- the (M) is because single digit days do not have 0 padding, e.g. 'BDA 2014 1 05.txt'
-    - output csvs: 'BDA_YYYY_MM_DD_night.csv' and 'BDA_YYYY_MM_DD_morning.csv' (where there is a night and morning)
+    - output csvs: 'BDA_YYYY_(M)M_DD_night.csv' and 'BDA_YYYY_(M)M_DD_morning.csv' (where there is a night and morning)
     '''
     # iterate through input directory (directory_of_files_to_read_full_path)
     # for each file, translate to one or more csvs and save in output directory (directory_of_files_to_write_full_path)
