@@ -1,0 +1,4 @@
+[andrew@ayer bible_display_app_file_entries (main % u=)]$ python3 bible_display_app_files_to_csvs.py -i /Users/andrew/grace_and_truth_ministries/migrate_database_with_michael/title_program_numbers_and_bible_verse_timestamp_files/bible_verse_timestamp_files/bible_verse_timestamp_files_unzipped/ -o "${PWD}/output_csvs_with_morning_or_night/"
+
+[andrew@ayer bible_display_app_file_entries (main % u=)]$ python3 copy_output_csvs_into_table.py -i "${PWD}/output_csvs_with_morning_or_night" -w localhost -p 5433 -d postgres -t bible_display_app_file_entries_with_morning_or_night
+

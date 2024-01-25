@@ -1,0 +1,5 @@
+BDA 2019 5 01.txt
+Line 99 - remove space
+{"Wed 1 May 2019 12:47 :24", "Psalms", 115, 3}
+->
+{"Wed 1 May 2019 12:47:24", "Psalms", 115, 3}

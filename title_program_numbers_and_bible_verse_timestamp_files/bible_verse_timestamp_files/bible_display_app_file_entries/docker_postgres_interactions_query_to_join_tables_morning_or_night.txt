@@ -1,0 +1,95 @@
+postgres=# DELETE FROM bible_display_app_file_entries_with_morning_or_night;
+DELETE 218107
+postgres=# SELECT COUNT(*) FROM bible_display_app_file_entries_with_morning_or_night;
+ count  
+--------
+ 218107
+(1 row)
+
+postgres=# SELECT id, entry.morning_or_night, entry.entry_timestamp, entry.book, entry.chapter, entry.verse
+FROM presentations_decoded_date 
+JOIN bible_display_app_file_entries_with_morning_or_night as entry ON presentations_decoded_date.presentation_date = entry.entry_date
+WHERE presentations_decoded_date.morning_or_night = entry.morning_or_night AND
+id = 3192 ORDER BY entry_timestamp;
+  id  | morning_or_night |   entry_timestamp   |      book      | chapter | verse 
+------+------------------+---------------------+----------------+---------+-------
+ 3192 | morning          | 2014-01-05 00:01:49 | Romans         | 8       | 29
+ 3192 | morning          | 2014-01-05 00:01:50 | Romans         | 8       | 29
+ 3192 | morning          | 2014-01-05 00:01:54 | Romans         | 8       | 29
+ 3192 | morning          | 2014-01-05 00:01:59 | Isaiah         | 46      | 10
+ 3192 | morning          | 2014-01-05 00:02:12 | Daniel         | 4       | 35
+ 3192 | morning          | 2014-01-05 00:02:15 | Daniel         | 4       | 36
+ 3192 | morning          | 2014-01-05 00:02:19 | Daniel         | 4       | 36
+ 3192 | morning          | 2014-01-05 00:02:26 | Isaiah         | 45      | 7
+ 3192 | morning          | 2014-01-05 00:02:37 | Ephesians      | 1       | 11
+ 3192 | morning          | 2014-01-05 00:02:43 | 1Thessalonians | 5       | 18
+ 3192 | morning          | 2014-01-05 00:02:51 | Romans         | 8       | 28
+ 3192 | morning          | 2014-01-05 00:03:03 | Romans         | 8       | 29
+ 3192 | morning          | 2014-01-05 00:03:31 | Romans         | 8       | 29
+ 3192 | morning          | 2014-01-05 00:05:14 | Romans         | 8       | 30
+ 3192 | morning          | 2014-01-05 00:05:16 | Romans         | 8       | 30
+ 3192 | morning          | 2014-01-05 00:05:21 | Romans         | 8       | 31
+ 3192 | morning          | 2014-01-05 00:05:32 | Romans         | 8       | 31
+ 3192 | morning          | 2014-01-05 00:05:33 | Romans         | 8       | 30
+ 3192 | morning          | 2014-01-05 00:06:02 | John           | 6       | 37
+ 3192 | morning          | 2014-01-05 00:06:13 | John           | 10      | 24
+ 3192 | morning          | 2014-01-05 00:06:16 | John           | 10      | 25
+ 3192 | morning          | 2014-01-05 00:06:21 | John           | 10      | 26
+ 3192 | morning          | 2014-01-05 00:06:25 | John           | 10      | 26
+ 3192 | morning          | 2014-01-05 00:06:27 | John           | 10      | 26
+ 3192 | morning          | 2014-01-05 00:06:46 | Romans         | 8       | 29
+ 3192 | morning          | 2014-01-05 00:13:05 | James          | 1       | 18
+ 3192 | morning          | 2014-01-05 00:13:07 | John           | 1       | 13
+ 3192 | morning          | 2014-01-05 00:13:42 | Acts           | 14      | 22
+ 3192 | morning          | 2014-01-05 00:13:45 | Acts           | 14      | 23
+ 3192 | morning          | 2014-01-05 00:13:47 | Acts           | 14      | 23
+ 3192 | morning          | 2014-01-05 00:13:59 | Hebrews        | 12      | 6
+ 3192 | morning          | 2014-01-05 00:14:08 | 1Corinthians   | 2       | 14
+ 3192 | morning          | 2014-01-05 00:14:59 | 1Corinthians   | 3       | 1
+ 3192 | morning          | 2014-01-05 00:18:25 | Luke           | 17      | 5
+ 3192 | morning          | 2014-01-05 00:19:06 | Acts           | 14      | 22
+ 3192 | morning          | 2014-01-05 00:19:08 | Luke           | 17      | 5
+postgres=# SELECT id, entry.morning_or_night, entry.entry_timestamp, entry.book, entry.chapter, entry.verse
+FROM presentations_decoded_date 
+JOIN bible_display_app_file_entries_with_morning_or_night as entry ON presentations_decoded_date.presentation_date = entry.entry_date
+WHERE presentations_decoded_date.morning_or_night = entry.morning_or_night AND
+id = 3193 ORDER BY entry_timestamp;
+  id  | morning_or_night |   entry_timestamp   |      book      | chapter | verse 
+------+------------------+---------------------+----------------+---------+-------
+ 3193 | night            | 2014-01-05 00:04:45 | 1Timothy       | 4       | 1
+ 3193 | night            | 2014-01-05 00:10:36 | Mark           | 1       | 25
+ 3193 | night            | 2014-01-05 00:11:48 | 1Timothy       | 4       | 1
+ 3193 | night            | 2014-01-05 00:26:08 | John           | 14      | 6
+ 3193 | night            | 2014-01-05 00:26:17 | Matthew        | 7       | 6
+ 3193 | night            | 2014-01-05 00:26:23 | Matthew        | 7       | 14
+ 3193 | night            | 2014-01-05 00:26:31 | Matthew        | 7       | 13
+ 3193 | night            | 2014-01-05 00:28:51 | 3John          | 1       | 2
+ 3193 | night            | 2014-01-05 00:29:44 | Acts           | 14      | 22
+ 3193 | night            | 2014-01-05 00:29:47 | 2Timothy       | 3       | 12
+ 3193 | night            | 2014-01-05 00:29:51 | 2Timothy       | 3       | 13
+ 3193 | night            | 2014-01-05 00:29:51 | Philippians    | 1       | 29
+ 3193 | night            | 2014-01-05 00:33:11 | 1Corinthians   | 6       | 9
+ 3193 | night            | 2014-01-05 00:33:27 | 1Corinthians   | 6       | 9
+ 3193 | night            | 2014-01-05 00:33:28 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:33:29 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:33:31 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:34:18 | Luke           | 14      | 27
+ 3193 | night            | 2014-01-05 00:36:13 | Luke           | 9       | 23
+ 3193 | night            | 2014-01-05 00:36:32 | 1Corinthians   | 6       | 9
+ 3193 | night            | 2014-01-05 00:36:32 | 2Timothy       | 3       | 12
+ 3193 | night            | 2014-01-05 00:36:33 | 1Corinthians   | 6       | 9
+ 3193 | night            | 2014-01-05 00:36:37 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:36:38 | 1Corinthians   | 6       | 9
+ 3193 | night            | 2014-01-05 00:36:51 | 1Corinthians   | 6       | 9
+ 3193 | night            | 2014-01-05 00:37:36 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:37:46 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:37:46 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:37:47 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:41:06 | 1Corinthians   | 6       | 11
+ 3193 | night            | 2014-01-05 00:42:28 | 1Corinthians   | 15      | 33
+ 3193 | night            | 2014-01-05 00:49:01 | 1Corinthians   | 15      | 34
+ 3193 | night            | 2014-01-05 00:49:40 | 2John          | 1       | 10
+ 3193 | night            | 2014-01-05 00:50:44 | 1Corinthians   | 6       | 10
+ 3193 | night            | 2014-01-05 00:50:47 | 1Corinthians   | 6       | 11
+ 3193 | night            | 2014-01-05 00:51:00 | 1Corinthians   | 5       | 1
+postgres=# 
