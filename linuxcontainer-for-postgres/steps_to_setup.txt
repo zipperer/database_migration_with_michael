@@ -1,0 +1,95 @@
+https://linuxcontainers.org/
+https://linuxcontainers.org/lxc
+https://linuxcontainers.org/lxc/getting-started/
+
+$ sudo apt-get install lxc
+
+root@host:~# lxc-create --name mycontainer --template download -- --dist ubuntu --release jammy --arch amd64
+
+root@host:~# lxc-start --name mycontainer
+
+root@host:~# echo "lxc.start.auto = 1" >>/var/lib/lxc/mycontainer/config
+
+root@host:~# lxc-stop --name mycontainer
+
+root@host:~# lxc-start --name mycontainer
+
+# https://github.com/lxc/linuxcontainers.org/pull/700
+
+root@host:~# cat /etc/default/lxc-net | grep LXC_BRIDGE
+
+and get value for LXC_BRIDGE, e.g. lxcbr0
+
+root@host:~# ufw allow in on lxcbr0
+root@host:~# ufw route allow in on lxcbr0
+root@host:~# ufw route allow out on lxcbr0
+root@host:~# service lxc-net restart
+root@host:~# lxc-stop --name mycontainer
+root@host:~# lxc-start --name mycontainer
+
+# do this or open the file in an editor and uncomment line with LXC_DHCP_CONFILE
+root@host:~# sed -i 's|^#LXC_DHCP_CONFILE=.*$|LXC_DHCP_CONFILE=/etc/lxc/dnsmasq.conf|' /etc/default/lxc-net
+
+# https://github.com/lxc/linuxcontainers.org/pull/699
+
+# open /etc/lxc/dnsmasq.conf in an editor, e.g.
+root@host:~# vi /etc/lxc/dnsmasq.conf
+
+# observe value for LXC_DHCP_RANGE (e.g. LXC_DHCP_RANGE="10.0.1.2,10.0.1.254")
+
+# pick value in that range that is not yet used (e.g. 10.0.1.84)
+# one way to find a value that is not yet used is to stop and start the container and see the IP address the container gets
+# root@host:~# service lxc-net restart
+# root@host:~# lxc-stop --name mycontainer
+# root@host:~# lxc-start --name mycontainer
+# root@host:~# lxc-ls --fancy
+
+# do this or open an editor and add the line
+root@host:~# echo "dhcp-host=mycontainer,10.0.1.84" >>/etc/lxc/dnsmasq.conf
+
+root@host:~# service lxc-net restart
+root@host:~# lxc-stop --name mycontainer
+root@host:~# lxc-start --name mycontainer
+root@host:~# lxc-ls --fancy
+
+# observe IP address for container. Suppose it is 10.0.1.84.
+#  Will use later for TablePlus (or psql --host)
+
+# ignore volume mount for now
+
+# set up postgres in container
+
+root@host:~# lxc-attach --name mycontainer
+
+# https://github.com/zipperer/migrate_database_with_michael/blob/63381d1fb1d8332ae6369bc6d5376ccf2f1ea64e/meetings/20231114/prepare_for_next_meeting/postgres_script.txt
+
+root@container:/# apt update
+root@container:/# apt upgrade
+root@container:/# apt-get install postgresql
+root@container:/# service postgresql start
+
+root@container:/# vi /etc/postgresql/NUMBER/main/pg_hba.conf
+# ^ replace 'peer' with 'trust'. save and exit.
+root@container:/# service postgresql restart
+
+root@container:/# psql --username postgres
+root@container:/ psql> ALTER USER postgres WITH ENCRYPTED PASSWORD 'postgres';
+root@container:/ psql> \q
+
+root@container:/# vi /etc/postgresql/14/main/postgresql.conf
+# find listen_addresses. remove # at beginning of line. replace 'localhost' with '*'. save and exit.
+
+root@container:/# vi /etc/postgresql/14/main/pg_hba.conf
+# at bottom of file, add new line:
+hostssl all             all             0.0.0.0/0               scram-sha-256
+# save and exit.
+
+root@container:/# service postgresql restart
+
+
+In TablePlus, new connection with
+hostname/IP: 10.0.1.84
+user: postgres
+password: postgres
+dbname: postgres
+port: 5432
