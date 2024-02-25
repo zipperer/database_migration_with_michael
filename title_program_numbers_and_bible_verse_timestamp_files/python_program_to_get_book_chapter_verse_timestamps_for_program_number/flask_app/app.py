@@ -16,8 +16,8 @@ def message_id_title(message_id):
     psycopg2_cursor = psycopg2_connection.cursor()
     psycopg2_cursor.execute('''SELECT title FROM presentations_decoded_date WHERE id = %s;''', (message_id,))
     results = psycopg2_cursor.fetchall()
-    result = results[0] # should be only one result
-    title = result[0] # should be only one entry in tuple
+    result = results[0] # expect only one result because id is primary key, so it is unique.
+    title = result[0] # expect only one entry in tuple because query asks for only one column
     return title
 
 def message_id_timestamped_verses(message_id):
