@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -48,3 +48,8 @@ def get_timestamped_verses_table(message_id):
     message_title = message_id_title(message_id)
     results = message_id_timestamped_verses(message_id)
     return render_template('timestamp_verse_table.html', message_id=message_id, message_title=message_title, results=results)
+
+@app.route('/timestamped_verses/<int:message_id>', methods=['GET'])
+def get_timestamped_verses(message_id):
+    results = message_id_timestamped_verses(message_id)
+    return jsonify(results)
